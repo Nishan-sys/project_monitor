@@ -1,8 +1,14 @@
-<h1>Provincial director</h1>
-<p>Welcome, {{ request.user.username }}</p>
+{% extends 'base.html' %}
+{% block title %}Provincial Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome to Provincial Dashboard</h2>
+<p>Yo logged as, {{ request.user.username }}</p>
+<p>Here you can manage zones and assign projects.</p>
 {% if user.is_authenticated %}
       <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit">Logout</button>
     </form>
 {% endif %}
+{% endblock %}
