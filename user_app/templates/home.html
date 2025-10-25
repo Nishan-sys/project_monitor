@@ -1,41 +1,229 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Project Monitoring System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+{% extends 'master.html' %}
 
-<div class="container text-center mt-5">
-    <h1 class="mb-5">Project Monitoring System</h1>
-    <div class="row justify-content-center">
-        <!-- Provincial Director -->
-        <div class="col-md-3 mb-3">
-            <a href="{% url 'login' %}" class="btn btn-primary btn-lg w-100">Provincial Director</a>
-        </div>
+{% block title %}My Page Title{% endblock %}
 
-        <!-- Zonal Director -->
-        <div class="col-md-3 mb-3">
-            <a href="{% url 'login' %}" class="btn btn-success btn-lg w-100">Zonal Director</a>
-        </div>
+{% block content %}
 
-        <!-- Divisional Director -->
-        <div class="col-md-3 mb-3">
-            <a href="{% url 'login' %}" class="btn btn-warning btn-lg w-100">Divisional Director</a>
+<!-- Hero Section -->
+<div class="bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container py-5">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6 text-white">
+                <h1 class="display-3 fw-bold mb-4">ව්‍යාපෘති ප්‍රගති අධීක්ෂණ පද්ධතිය</h1>
+                <p class="lead mb-4">උතුරු මැද පළාත් සභාවේ සියලුම ව්‍යාපෘති සැලසුම්, ක්‍රියාත්මක කිරීම සහ අධීක්ෂණය සඳහා පූර්ණ විසඳුමක්</p>
+                <div class="d-flex gap-3">
+                    <a href="#projects" class="btn btn-light btn-lg px-4">ව්‍යාපෘති බලන්න</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">ඇතුළු වන්න</a>
+                </div>
+            </div>
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="row text-center g-4">
+                            <div class="col-6">
+                                <div class="bg-primary bg-opacity-10 rounded p-3">
+                                    <h2 class="text-primary fw-bold mb-0">156</h2>
+                                    <p class="text-muted mb-0">සක්‍රීය ව්‍යාපෘති</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-success bg-opacity-10 rounded p-3">
+                                    <h2 class="text-success fw-bold mb-0">89</h2>
+                                    <p class="text-muted mb-0">සම්පූර්ණ කළ</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-warning bg-opacity-10 rounded p-3">
+                                    <h2 class="text-warning fw-bold mb-0">23</h2>
+                                    <p class="text-muted mb-0">සැලසුම් අවධියේ</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-info bg-opacity-10 rounded p-3">
+                                    <h2 class="text-info fw-bold mb-0">රු.45M</h2>
+                                    <p class="text-muted mb-0">මුළු අයවැය</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Principal -->
-        <div class="col-md-3 mb-3">
-            <a href="{% url 'login' %}" class="btn btn-danger btn-lg w-100">Principal</a>
-        </div>
-    </div>
-      <!-- Highlighted footer line -->
-    <div class="mt-5 p-3 bg-dark text-white rounded shadow-lg">
-        <h5 class="mb-0">✨ Developed by Zonal Education Office - Anuradhapura ✨</h5>
     </div>
 </div>
 
-</body>
-</html>
+<!-- Key Features Section -->
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">පද්ධතියේ ප්‍රධාන විශේෂාංග</h2>
+        <p class="lead text-muted">ව්‍යාපෘති කළමනාකරණය සඳහා ඔබට අවශ්‍ය සියල්ල</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
+                <div class="card-body text-center p-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="fs-1">📊</span>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">ප්‍රගති නිරීක්ෂණය</h5>
+                    <p class="card-text text-muted">සැබෑ කාලීන ව්‍යාපෘති ප්‍රගතිය නිරීක්ෂණය කර ප්‍රතිවේදන ලබා ගන්න</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
+                <div class="card-body text-center p-4">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="fs-1">💰</span>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">අයවැය කළමනාකරණය</h5>
+                    <p class="card-text text-muted">ව්‍යාපෘති වියදම් සහ අයවැය ප්‍රවාහය කළමනාකරණය කරන්න</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
+                <div class="card-body text-center p-4">
+                    <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="fs-1">📅</span>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">කාල සටහන් සැලසුම්</h5>
+                    <p class="card-text text-muted">ව්‍යාපෘති කාල සටහන් සහ සන්ධිස්ථාන සැලසුම් කරන්න</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
+                <div class="card-body text-center p-4">
+                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="fs-1">👥</span>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">කණ්ඩායම් සහයෝගීතාව</h5>
+                    <p class="card-text text-muted">කණ්ඩායම් සාමාජිකයන් සමඟ පහසුවෙන් සම්බන්ධ වන්න</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Projects Section -->
+<div class="bg-light py-5" id="projects">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">මෑත ව්‍යාපෘති</h2>
+            <p class="lead text-muted">අවසන්ම එකතු කළ සහ යාවත්කාලීන කළ ව්‍යාපෘති</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-success">සක්‍රීය</span>
+                            <small class="text-muted">2025-01-15</small>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">ග්‍රාමීය මාර්ග සංවර්ධනය</h5>
+                        <p class="card-text text-muted mb-3">අනුරාධපුර දිස්ත්‍රික්කයේ ග්‍රාමීය මාර්ග ජාලය සංවර්ධනය කිරීම සඳහා වන ව්‍යාපෘතිය</p>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="text-muted">ප්‍රගතිය</small>
+                                <small class="fw-bold text-success">65%</small>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-outline-primary w-100">විස්තර බලන්න</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-warning text-dark">සැලසුම් අවධිය</span>
+                            <small class="text-muted">2025-01-20</small>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">පාසල් ගොඩනැගිලි ප්‍රතිසංස්කරණය</h5>
+                        <p class="card-text text-muted mb-3">පොළොන්නරුව දිස්ත්‍රික්කයේ පාසල් ගොඩනැගිලි ප්‍රතිසංස්කරණය සහ නවීකරණය</p>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="text-muted">ප්‍රගතිය</small>
+                                <small class="fw-bold text-warning">25%</small>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-outline-primary w-100">විස්තර බලන්න</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-primary">ක්‍රියාත්මක</span>
+                            <small class="text-muted">2025-02-01</small>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">ජල සම්පාදන යෝජනා ක්‍රමය</h5>
+                        <p class="card-text text-muted mb-3">ගම්බිම් ප්‍රදේශවල පිරිසිදු පානීය ජලය සඳහා ජල සම්පාදන යෝජනා ක්‍රමය</p>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="text-muted">ප්‍රගතිය</small>
+                                <small class="fw-bold text-primary">45%</small>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-outline-primary w-100">විස්තර බලන්න</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="#" class="btn btn-primary btn-lg px-5">සියලුම ව්‍යාපෘති බලන්න</a>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="container my-5 py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="display-5 fw-bold mb-4">ඔබේ ව්‍යාපෘති කළමනාකරණය අද ආරම්භ කරන්න</h2>
+            <p class="lead text-muted mb-4">පද්ධතියට ඇතුළු වී ඔබේ ව්‍යාපෘති එක් කරන්න, අධීක්ෂණය කරන්න සහ කළමනාකරණය කරන්න</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-5">ආරම්භ කරන්න</a>
+                <a href="#" class="btn btn-outline-secondary btn-lg px-5">වැඩි විස්තර</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.hover-shadow {
+    transition: all 0.3s ease;
+}
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+}
+.transition {
+    transition: all 0.3s ease;
+}
+.min-vh-50 {
+    min-height: 50vh;
+}
+</style>
+{% endblock %}

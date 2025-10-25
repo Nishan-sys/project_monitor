@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
+from .models import Division, School
 
 def login_view(request):
     if request.method == 'POST':
@@ -24,8 +26,7 @@ def logout_view(request):
     return redirect('login')
 
 def home(request):
-    print("Home View Accessed")
-    return render(request, 'login.html')
+    return render(request, 'home.html')
 
 @login_required
 def dashboard_redirect(request):
@@ -62,4 +63,28 @@ def divisional_dashboard(request):
 def principal_dashboard(request):
     return render(request, 'principal_dashboard.html')
 
+'''
+def index_redirect(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        return redirect('login')
+'''
+def division_schools(request, division_id=None):
+    divisions = Division.objects.all()
+    if division_id:
+        selected_division = Division.objects.get(id=division_id)
+    else:
+        selected_division = divisions.first()
+    schools = School.objects.filter(division=selected_division)
+    
+    return render(request, 'division_schools.html', {
+        'divisions': divisions,
+        'schools': schools,
+        'selected_division': selected_division,
+    })
+
+def get_schools_by_division(request, division_id):
+    schools = School.objects.filter(division_id=division_id).values('id', 'name', 'census_number')
+    return JsonResponse(list(schools), safe=False)
 # Create your views here.

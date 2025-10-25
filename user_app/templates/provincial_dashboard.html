@@ -1,14 +1,7 @@
-{% extends 'base.html' %}
-{% block title %}Provincial Dashboard{% endblock %}
+{% extends 'master.html' %}
+
+{% block title %}My Page Title{% endblock %}
 
 {% block content %}
-<h2>Welcome to Provincial Dashboard</h2>
-<p>Yo logged as, {{ request.user.username }}</p>
-<p>Here you can manage zones and assign projects.</p>
-{% if user.is_authenticated %}
-      <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Logout</button>
-    </form>
-{% endif %}
+<h1>Provincial Director</h1>
 {% endblock %}

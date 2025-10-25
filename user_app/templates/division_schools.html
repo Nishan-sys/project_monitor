@@ -1,0 +1,89 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}ප්‍රදේශ අනුව පාසල්{% endblock %}
+
+{% block content %}
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-primary">All schools in Anuradhapua</h3>
+    </div>
+
+    <!-- Card container -->
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-body">
+            
+            <!-- Division selection -->
+            <div class="d-flex align-items-center mb-4">
+                <label for="divisionSelect" class="form-label fw-semibold me-3 mb-0">Select Division:</label>
+                <select id="divisionSelect" class="form-select w-auto">
+                    {% for division in divisions %}
+                        <option value="{{ division.id }}">{{ division.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Table container -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">School name</th>
+                            <th scope="col">Census number</th>
+                             <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schoolsTable">
+                        {% for school in schools %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ school.name }}</td>
+                            <td>{{ school.census_number }}</td>
+                            <td>
+                                {% comment %}
+                                <a href="{% #url 'assign_project' school.id %}" class="btn btn-sm btn-outline-primary">Assign Project</a>
+                                {% endcomment %}
+                                <a href="#" class="btn btn-sm btn-outline-primary">Assign a Project</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted">පාසල් නොමැත</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function() {
+    $('#divisionSelect').change(function() {
+        var divisionId = $(this).val();
+
+        $.ajax({
+            url: '/get-schools/' + divisionId + '/',
+            type: 'GET',
+            success: function(data) {
+                var tbody = $('#schoolsTable');
+                tbody.empty();
+
+                if (data.length === 0) {
+                    tbody.append('<tr><td colspan="3" class="text-center text-muted">පාසල් නොමැත</td></tr>');
+                } else {
+                    $.each(data, function(index, school) {
+                        tbody.append(
+                            '<tr><td>' + (index + 1) + '</td><td>' + school.name + '</td><td>' + school.census_number + '</td></tr>'
+                        );
+                    });
+                }
+            },
+            error: function() {
+                alert("Error loading schools.");
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
