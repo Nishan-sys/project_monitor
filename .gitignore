@@ -1,0 +1,64 @@
+# ============================
+# Django Project .gitignore
+# ============================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ---- Django ----
+# Ignore local settings (if you create them)
+local_settings.py
+
+# Ignore static files collected by collectstatic
+/staticfiles/
+/media/
+
+# Ignore logs and temporary files
+*.log
+*.pot
+*.pyc
+*.pyo
+*.mo
+*.swp
+*.swo
+*.tmp
+
+# ---- Environment / virtualenv ----
+.env
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# ---- IDE & editor files ----
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ---- OS generated files ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Migrations cache ----
+*/migrations/__pycache__/
+
+# ---- Compiled bytecode ----
+__pycache__/
+*.py[cod]
+
+# ---- Backup & package files ----
+*.bak
+*.tar
+*.zip
+*.rar
+
+# ---- Optional: Jupyter / notebook ----
+.ipynb_checkpoints/
+
+# Keep Django database in Git (contains important data)
+!db.sqlite3
