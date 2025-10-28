@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+import django_unicorn
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('user_app.urls')),
+    path("unicorn/", include("django_unicorn.urls")),
     
 ]

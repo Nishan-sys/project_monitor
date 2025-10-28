@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="si">
@@ -9,6 +10,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% block extra_css %}{% endblock %}
     {% block extra_head %}{% endblock %}
+    {% load unicorn %}
+    {% unicorn_scripts %}
 </head>
 <body>
     <!-- Navigation Bar -->
