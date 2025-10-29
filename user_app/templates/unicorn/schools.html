@@ -1,12 +1,14 @@
 <!-- Unicorn component එක කිසිම දෙයක් extend කරන්නේ නැහැ -->
+
 <div class="schools-component">
+    
     <!-- Division Dropdown -->
     <div class="mb-3">
-        <label class="form-label">කොට්ඨාසය තෝරන්න:</label>
+        <label class="form-label">Select a division:</label>
         <select 
             unicorn:model="selected_division_id"
             class="form-select">
-            <option value="">-- තෝරන්න --</option>
+            <option value="">-- select --</option>
             {% for division in divisions %}
                 <option value="{{ division.id }}">{{ division.name }}</option>
             {% endfor %}
@@ -16,39 +18,48 @@
     <!-- Schools Dropdown -->
     {% if selected_division_id %}
         <div class="mb-3">
-            <label class="form-label">පාසල තෝරන්න:</label>
+            <label class="form-label">You can assign a project by clicking Asign Project button under Action</label>
             
             {% if schools %}
-                <select 
-                    unicorn:model="selected_school_id"
-                    class="form-select">
-                    <option value="">-- තෝරන්න --</option>
-                    {% for school in schools %}
-                        <option value="{{ school.id }}">{{ school.name }}</option>
-                    {% endfor %}
-                </select>
-                <small class="text-muted">{{ schools|length }} පාසල් හමුවිය</small>
+                <!-- table testing start-->
+        <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">School name</th>
+                            <th scope="col">Census number</th>
+                             <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schoolsTable">
+                        {% for school in schools %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ school.name }}</td>
+                            <td>{{ school.census_number }}</td>
+                            <td>
+                                {% comment %}
+                                <a href="{% #url 'assign_project' school.id %}" class="btn btn-sm btn-outline-primary">Assign Project</a>
+                                {% endcomment %}
+                                <a href="#" class="btn btn-sm btn-outline-primary">Assign a Project</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted">පාසල් නොමැත</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- table testing end-->
+                <small class="text-muted">​Number of schools in this division is {{ schools|length }}</small>
             {% else %}
                 <p class="text-muted">මේ කොට්ඨාසයේ පාසල් නැත</p>
             {% endif %}
         </div>
+        
     {% endif %}
     
-    <!-- Selected Info -->
-    {% if selected_school_id %}
-        <div class="alert alert-info mt-3">
-            <h5>තෝරාගත් විස්තර:</h5>
-            {% with division=get_selected_division school=get_selected_school %}
-                {% if division %}
-                    <p><strong>කොට්ඨාසය:</strong> {{ division.name }}</p>
-                {% endif %}
-                {% if school %}
-                    <p><strong>පාසල:</strong> {{ school.name }}</p>
-                {% endif %}
-            {% endwith %}
-            <button unicorn:click="reset" class="btn btn-sm btn-danger">Clear</button>
-        </div>
-    {% endif %}
-    
+ 
     <div unicorn:loading class="text-primary">⏳ Loading...</div>
 </div>
