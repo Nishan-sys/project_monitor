@@ -1,0 +1,42 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Projects List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="text-primary mb-3">All Projects</h3>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Project Name</th>
+                    <th>School</th>
+                    <th>Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Estimated Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.school.name }}</td>
+                    <td>{{ project.get_project_type_display }}</td>
+                    <td>{{ project.start_date }}</td>
+                    <td>{{ project.end_date }}</td>
+                    <td>{{ project.estimated_cost }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">No projects found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

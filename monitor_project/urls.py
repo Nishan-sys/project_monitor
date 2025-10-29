@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('user_app.urls')),
     path("unicorn/", include("django_unicorn.urls")),
+    path('projects/', include('projects_app.urls')),
     
 ]

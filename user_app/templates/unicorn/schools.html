@@ -42,7 +42,7 @@
                                 {% comment %}
                                 <a href="{% #url 'assign_project' school.id %}" class="btn btn-sm btn-outline-primary">Assign Project</a>
                                 {% endcomment %}
-                                <a href="#" class="btn btn-sm btn-outline-primary">Assign a Project</a>
+                                <a href="{% url 'assign_project' school.id %}" class="btn btn-sm btn-outline-primary">Assign a Project</a>
                             </td>
                         </tr>
                         {% empty %}

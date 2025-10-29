@@ -25,16 +25,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">මුල් පිටුව</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">සේවා</a>
+                        <a class="nav-link" href="#">Contact us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">අප ගැන</a>
+                        <a class="nav-link" href="#">Our services</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">සම්බන්ධ වන්න</a>
+                        <a class="nav-link" href="{% url 'projects_list' %}">Projects</a>
                     </li>
                     {% if user.is_authenticated and user.profile.role == 'provincial' %}
                         <li class="nav-item dropdown">
@@ -57,20 +57,20 @@
                                 <i class="bi bi-person-circle"></i> {{ user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#">මගේ ප්‍රොෆයිලය</a></li>
-                                <li><a class="dropdown-item" href="#">සැකසීම්</a></li>
+                                <li><a class="dropdown-item" href="#">My Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="post" action="{% url 'logout' %}">
                                         {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">පිටවන්න (Logout)</button>
+                                        <button type="submit" class="dropdown-item text-danger">Logout</button>
                                     </form>
                                 </li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link text-info" href="{% url 'login' %}">ඇතුළු වන්න (Login)</a>
+                            <a class="nav-link text-info" href="{% url 'login' %}">Login</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -89,8 +89,8 @@
     <!-- Footer -->
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container text-center">
-            <p class="mb-0">&copy; 2025 මගේ වෙබ්සයිට. සියලුම හිමිකම් ඇවිරිණි.</p>
-            <p class="mb-0 mt-2">Bootstrap 5 භාවිතා කරමින් සාදන ලදී</p>
+            <p class="mb-0">&copy; All Rights Reserved</p>
+            <p class="mb-0 mt-2">Developed by ZEO</p>
         </div>
     </footer>
 
