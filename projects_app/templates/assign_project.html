@@ -1,0 +1,88 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Assign Project{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
+            <h4 class="mb-0">Assign a Project to {{ school.name }}</h4>
+        </div>
+
+        <div class="card-body p-4">
+            <form method="POST" action="">
+                {% csrf_token %}
+
+                <!-- Hidden school id -->
+                <input type="hidden" name="school_id" value="{{ school.id }}">
+
+                <!-- Display school name -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">School</label>
+                    <input type="text" class="form-control" value="{{ school.name }}" readonly>
+                </div>
+
+                <!-- Project name -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Project Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Enter project name" required>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Brief project description"></textarea>
+                </div>
+
+                <!-- Estimated cost -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Estimated Cost (LKR)</label>
+                    <input type="number" step="0.01" name="estimated_cost" class="form-control" placeholder="0.00" required>
+                </div>
+
+                <!-- Project type -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Project Type</label>
+                    <select name="project_type" class="form-select" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="new_construction">New Construction</option>
+                        <option value="repair">Repair</option>
+                    </select>
+                </div>
+
+                <!-- Sponsor -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Sponsor (Optional)</label>
+                    <input type="text" name="sponsor" class="form-control" placeholder="Funding source or sponsor name">
+                </div>
+
+                <!-- Contractor -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Contractor (Optional)</label>
+                    <input type="text" name="contractor" class="form-control" placeholder="Main contractor name">
+                </div>
+
+                <!-- Dates -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Start Date</label>
+                        <input type="date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">End Date</label>
+                        <input type="date" name="end_date" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Submit button -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success btn-lg px-5">
+                        <i class="bi bi-save"></i> Save Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
