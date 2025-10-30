@@ -41,6 +41,13 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.role}"
 
+
+
+class SchoolUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    school = models.OneToOneField(School, on_delete=models.CASCADE)
     
+    def __str__(self):
+        return self.school.name
 
 # Create your models here.

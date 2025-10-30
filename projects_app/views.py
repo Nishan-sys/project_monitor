@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from user_app.models import School
+from user_app.models import School, SchoolUser
 from .models import Projects
 
 def assign_project(request, school_id):
@@ -24,4 +24,11 @@ def assign_project(request, school_id):
 def projects_list(request):
     projects = Projects.objects.all().select_related('school')  # efficient query with school
     return render(request, 'projects_list.html', {'projects': projects})
-# Create your views here.
+
+
+def school_projects(request):
+    if request.user.is_authenticated:
+        school_user = SchoolUser.objects.get(user=request.user)
+        projects = Projects.objects.filter(school=school_user.school)
+        return render(request, 'school_projects.html', {'projects': projects})
+

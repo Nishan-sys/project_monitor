@@ -10,7 +10,9 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
+        
         if user is not None:
+            print(f"Attempting login forrrrr user: {username}")
             login(request, user)
             return redirect('dashboard_redirect')
         else:
@@ -44,6 +46,8 @@ def dashboard_redirect(request):
             return redirect('divisional_dashboard')
         elif role == 'principal':
             return redirect('principal_dashboard')
+        else:
+            return redirect('school_projects')  # fallback for unknown roles
 
     return redirect('login')  # fallback
 
