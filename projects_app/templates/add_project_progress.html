@@ -1,0 +1,132 @@
+{% extends 'master.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h4>Add Progress for {{ project.name }}</h4>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+      <label for="progress" class="form-label">Progress (%)</label>
+      <input type="number" name="progress" id="progress" class="form-control" min="0" max="100" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea name="description" id="description" rows="3" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="report_file" class="form-label">Upload Project Report (PDF/DOC)</label>
+      <input type="file" name="report_file" id="report_file" class="form-control" accept=".pdf,.doc,.docx">
+    </div>
+
+<div class="mb-3">
+  <label for="photos" class="form-label">Upload Up to 4 Photos</label>
+  <input type="file" name="photos" id="photos" class="form-control" accept="image/*" multiple>
+  <small class="text-muted">You can select up to 4 images (add in multiple steps if you want).</small>
+
+  <!-- Preview area -->
+  <div id="preview" class="mt-3 d-flex flex-wrap gap-2 border p-2 rounded bg-light"></div>
+</div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="{% url 'school_projects' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+<!--
+<script>
+const input = document.getElementById('photos');
+const previewContainer = document.getElementById('preview');
+let allFiles = []; // store selected images
+
+input.addEventListener('change', function (event) {
+  const newFiles = Array.from(event.target.files);
+
+  // Add new files to the list (without duplicates)
+  allFiles = [...allFiles, ...newFiles].slice(0, 4);
+
+  // Create a new DataTransfer object to update input.files
+  const dataTransfer = new DataTransfer();
+  allFiles.forEach(file => dataTransfer.items.add(file));
+  input.files = dataTransfer.files;
+
+  // Clear preview and re-render all
+  previewContainer.innerHTML = '';
+  allFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'img-thumbnail me-2 mb-2';
+      img.style.width = '120px';
+      img.style.height = '120px';
+      previewContainer.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+</script>-->
+<script>
+const input = document.getElementById('photos');
+const previewContainer = document.getElementById('preview');
+let allFiles = [];
+
+input.addEventListener('change', function(event) {
+  const newFiles = Array.from(event.target.files);
+
+  // Merge with existing and keep only first 4
+  allFiles = [...allFiles, ...newFiles].slice(0, 4);
+
+  updatePreview();
+});
+
+function updatePreview() {
+  previewContainer.innerHTML = '';
+
+  const dataTransfer = new DataTransfer();
+  allFiles.forEach((file, index) => {
+    dataTransfer.items.add(file);
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      // Image container
+      const wrapper = document.createElement('div');
+      wrapper.className = 'position-relative';
+      wrapper.style.width = '120px';
+
+      // Image preview
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'img-thumbnail mb-2';
+      img.style.width = '120px';
+      img.style.height = '120px';
+      img.style.objectFit = 'cover';
+
+      // Remove button (❌)
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1 rounded-circle';
+      removeBtn.style.width = '24px';
+      removeBtn.style.height = '24px';
+      removeBtn.style.padding = '0';
+      removeBtn.addEventListener('click', () => removePhoto(index));
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(removeBtn);
+      previewContainer.appendChild(wrapper);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  input.files = dataTransfer.files;
+}
+
+function removePhoto(index) {
+  allFiles.splice(index, 1);
+  updatePreview();
+}
+</script>
+
+{% endblock %}

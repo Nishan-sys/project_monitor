@@ -13,7 +13,7 @@
         <td>{{ p.description }}</td>
         <td>{{ p.contractor }}</td>
          <td>
-        <a href="#" class="btn btn-sm btn-outline-primary">
+        <a href="{% url 'project_progress' p.id %}" class="btn btn-sm btn-outline-primary">
           Add Progress
         </a>
       </td>
@@ -25,5 +25,5 @@
 </table>
 {% endblock %}
 {% comment %}
-{% url 'add_progress' p.id %}
+
 {% endcomment %}

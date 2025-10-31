@@ -26,4 +26,23 @@ class Projects(models.Model):
     
     def __str__(self):
         return self.name
-# Create your models here.
+
+class ProjectProgress(models.Model):
+    project = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name='updates')
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    progress = models.IntegerField()
+    description = models.TextField(blank=True, null=True)
+    report_file = models.FileField(upload_to='project_reports/', blank=True, null=True)
+    
+
+    def __str__(self):
+        return f"{self.project.name} - {self.progress}%"
+    
+
+class ProgressPhoto(models.Model):
+    progress = models.ForeignKey(ProjectProgress, on_delete=models.CASCADE, related_name='photos')
+    image = models.ImageField(upload_to='project_photos/')
+
+    def __str__(self):
+        return f"Photo for {self.progress.project.name}"

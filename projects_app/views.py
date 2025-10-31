@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from user_app.models import School, SchoolUser
-from .models import Projects
+from .models import Projects, ProjectProgress, ProgressPhoto
+from django.contrib.auth.decorators import login_required
+
 
 def assign_project(request, school_id):
     school = get_object_or_404(School, id=school_id)
@@ -32,3 +34,46 @@ def school_projects(request):
         projects = Projects.objects.filter(school=school_user.school)
         return render(request, 'school_projects.html', {'projects': projects})
 
+
+
+@login_required
+def add_project_progress(request, project_id):
+    project = get_object_or_404(Projects, id=project_id)
+    school_user = request.user.schooluser
+
+    if project.school != school_user.school:
+        return redirect('school_projects')
+
+    if request.method == 'POST':
+        print("FILES:", request.FILES)
+        print("POST:", request.POST)
+        progress = request.POST.get('progress')
+        description = request.POST.get('description')
+        report_file = request.FILES.get('report_file')
+        photos = request.FILES.getlist('photos')  
+
+        progress_entry = ProjectProgress.objects.create(
+            project=project,
+            school=school_user.school,
+            progress=progress,
+            description=description,
+            report_file=report_file
+        )
+
+        # Save up to 4 photos
+        for photo in photos[:4]:
+            print("Saving photo:", photo.name)
+            ProgressPhoto.objects.create(progress=progress_entry, image=photo)
+
+        # Update project's latest progress
+        project.progress = progress
+        project.save()
+
+        return redirect('school_projects')
+
+    return render(request, 'add_project_progress.html', {'project': project})
+
+
+
+
+   
