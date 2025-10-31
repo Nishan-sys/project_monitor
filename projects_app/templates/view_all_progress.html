@@ -1,0 +1,73 @@
+{% extends 'master.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg p-4 rounded-4">
+    <h4 class="mb-4 text-center text-primary">Project Progress Overview</h4>
+
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead class="table-dark text-center">
+          <tr>
+            <th>#</th>
+            <th>School</th>
+            <th>Project</th>
+            <th>Progress (%)</th>
+            <th>Date</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in progresses %}
+          <tr>
+            <td class="text-center">{{ forloop.counter }}</td>
+            <td>{{ p.school.name }}</td>
+            <td>{{ p.project.name }}</td>
+            <td class="text-center">{{ p.progress }}%</td>
+            <td class="text-center">{{ p.date }}</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-info" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#details{{ p.id }}">
+                View
+              </button>
+            </td>
+          </tr>
+          <tr class="collapse" id="details{{ p.id }}">
+            <td colspan="6">
+              <div class="p-3 border rounded bg-light">
+                <strong>Description:</strong>
+                <p>{{ p.description|default:"(No description)" }}</p>
+
+                {% if p.report_file %}
+                  <p><strong>Report:</strong>
+                    <a href="{{ p.report_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                      Download
+                    </a>
+                  </p>
+                {% endif %}
+
+                {% if p.photos.all %}
+                  <div class="d-flex flex-wrap gap-2">
+                    {% for photo in p.photos.all %}
+                      <img src="{{ photo.image.url }}" class="img-thumbnail" style="width: 120px; height: 120px; object-fit: cover;">
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p class="text-muted">No photos uploaded</p>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-3">
+              No progress reports submitted yet.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

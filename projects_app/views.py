@@ -75,6 +75,27 @@ def add_project_progress(request, project_id):
     return render(request, 'add_project_progress.html', {'project': project})
 
 
+@login_required
+def view_all_progress(request):
+    # Only top-level users should access this
+    user = request.user
+
+    if hasattr(user, 'schooluser'):
+        # block school users
+        return redirect('school_projects')
+
+    # Provincial Director: can view all projects
+    progresses = ProjectProgress.objects.all().select_related('project', 'school')
+
+    # Zonal or Divisional Directors: filter by their area if needed
+    # Example (adjust depending on your user model fields):
+    # progresses = progresses.filter(school__division=user.division)
+
+    return render(request, 'view_all_progress.html', {
+        'progresses': progresses
+    }) 
+
+
 
 
    

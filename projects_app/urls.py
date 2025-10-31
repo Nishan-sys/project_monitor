@@ -6,4 +6,6 @@ urlpatterns = [
     path('list/', views.projects_list, name='projects_list'),
     path('my-projects/', views.school_projects, name='school_projects'),
     path('add-progress/<int:project_id>', views.add_project_progress, name='project_progress'),
+    path('all-progress/', views.view_all_progress, name='view_all_progress'),
+
 ]
