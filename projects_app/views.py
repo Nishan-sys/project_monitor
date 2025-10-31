@@ -31,8 +31,9 @@ def projects_list(request):
 def school_projects(request):
     if request.user.is_authenticated:
         school_user = SchoolUser.objects.get(user=request.user)
+        school = school_user.school
         projects = Projects.objects.filter(school=school_user.school)
-        return render(request, 'school_projects.html', {'projects': projects})
+        return render(request, 'school_projects.html', {'projects': projects, 'school': school,})
 
 
 

@@ -1,6 +1,7 @@
 <!-- templates/projects_app/school_projects.html -->
 {% extends 'master.html' %}
 {% block content %}
+<!--
 <h4>My Projects</h4>
 <table class="table">
   <thead>
@@ -22,8 +23,45 @@
       <tr><td colspan="3">No projects assigned</td></tr>
     {% endfor %}
   </tbody>
-</table>
-{% endblock %}
-{% comment %}
+</table>-->
+<div class="container mt-5">
+  <div class="card shadow-lg p-4 rounded-4">
+    <h4 class="mb-4 text-center text-primary">PROJECTS FOR {{ school.name }}</h4>
 
-{% endcomment %}
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead class="table-dark text-center">
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Contractor</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in projects %}
+            <tr>
+              <td class="text-center">{{ forloop.counter }}</td>
+              <td>{{ p.name }}</td>
+              <td>{{ p.description }}</td>
+              <td>{{ p.contractor }}</td>
+              <td class="text-center">
+                <a href="{% url 'project_progress' p.id %}" class="btn btn-sm btn-outline-primary rounded-pill">
+                  Add Progress
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-3">
+                No projects assigned yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
