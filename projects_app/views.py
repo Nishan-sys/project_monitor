@@ -106,14 +106,14 @@ def edit_project(request, project_id):
     # Optional: check permissions (only provincial or zonal directors)
     if project.assigned_by != request.user:
         messages.error(request, "You are not authorized to edit this project.")
-        return redirect('all_projects')
+        return redirect('projects_list')
 
     if request.method == 'POST':
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
             messages.success(request, "Project updated successfully.")
-            return redirect('all_projects')
+            return redirect('projects_list')
     else:
         form = ProjectForm(instance=project)
 
