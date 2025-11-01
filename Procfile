@@ -1,1 +1,1 @@
-web: gunicorn progress_monitoring.wsgi
+web: gunicorn monitor_project.wsgi
