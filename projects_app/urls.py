@@ -7,5 +7,7 @@ urlpatterns = [
     path('my-projects/', views.school_projects, name='school_projects'),
     path('add-progress/<int:project_id>', views.add_project_progress, name='project_progress'),
     path('all-progress/', views.view_all_progress, name='view_all_progress'),
+    path('edit/<int:project_id>/', views.edit_project, name='edit_project'),
+    path('delete/<int:project_id>/', views.delete_project, name='delete_project'),
 
 ]

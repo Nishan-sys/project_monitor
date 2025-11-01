@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Division, School
+from projects_app.models import Projects
 
 def login_view(request):
     if request.method == 'POST':
@@ -53,11 +54,39 @@ def dashboard_redirect(request):
 
 @login_required
 def provincial_dashboard(request):
-    return render(request, 'provincial_dashboard.html')
+    projects = Projects.objects.all().select_related('school', 'assigned_by')
+    total_projects = projects.count()
+    total_schools = School.objects.filter(projects__isnull=False).distinct().count()
+
+    # Example logic — you can adjust this based on actual progress tracking
+    completed_projects = projects.filter(end_date__lte='2025-10-31').count()
+    ongoing_projects = total_projects - completed_projects
+
+    context = {
+        'projects': projects,
+        'total_projects': total_projects,
+        'total_schools': total_schools,
+        'completed_projects': completed_projects,
+        'ongoing_projects': ongoing_projects,
+    }
+    return render(request, 'provincial_dashboard.html', context)
 
 @login_required
 def zonal_dashboard(request):
-    return render(request, 'zonal_dashboard.html')
+    projects = Projects.objects.filter(assigned_by=request.user)
+    total_projects = projects.count()
+    total_schools = School.objects.filter(projects__assigned_by=request.user).distinct().count()
+    completed_projects = projects.filter(end_date__lte='2025-10-31').count()  # adjust logic later
+    pending_progress = total_projects - completed_projects
+
+    context = {
+        'projects': projects,
+        'total_projects': total_projects,
+        'total_schools': total_schools,
+        'completed_projects': completed_projects,
+        'pending_progress': pending_progress,
+    }
+    return render(request, 'zonal_dashboard.html', context)
 
 @login_required
 def divisional_dashboard(request):

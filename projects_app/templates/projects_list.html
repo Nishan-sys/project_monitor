@@ -80,9 +80,13 @@
                     <td>{{ project.end_date }}</td>
                     <td>{{ project.estimated_cost }}</td>
                     <td>
-                        <a href="#" class="btn btn-sm btn-outline-info">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </td>
+    {% if project.assigned_by == user %}
+        <a href="{% url 'edit_project' project.id %}" class="btn btn-sm btn-outline-info">Edit</a>
+        <a href="{% url 'delete_project' project.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+    {% else %}
+        <span class="text-muted small">Assigned by {{ project.assigned_by.username }}</span>
+    {% endif %}
+</td>
                 </tr>
                 {% empty %}
                 <tr>

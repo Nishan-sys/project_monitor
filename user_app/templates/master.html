@@ -27,9 +27,11 @@
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                     </li>
+                    {% if user.is_authenticated and user.profile.role == 'zonal' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact us</a>
+                        <a class="nav-link" href="{% url 'zonal_dashboard'%}">Dashoboard</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="#">Our services</a>
                     </li>

@@ -30,7 +30,7 @@ class SchoolsView(UnicornView):
     def load_schools(self):
         """Schools load කරන්න"""
         if self.selected_division_id:
-            self.schools = School.objects.filter(division_id=self.selected_division_id).select_related('division').order_by('name')
+            self.schools = School.objects.filter(division_id=self.selected_division_id).select_related('division').order_by('census_number')
         else:
             self.schools = []
     

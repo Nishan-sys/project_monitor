@@ -1,16 +1,17 @@
 from django.contrib import admin
-from .models import Projects, ProjectProgress
+from .models import Projects, ProjectProgress,ProgressPhoto
 
 @admin.register(Projects)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'school', 'start_date', 'end_date')
+    list_display = ('name', 'school', 'project_type', 'assigned_by', 'start_date', 'end_date')
     search_fields = ('name',)
     list_filter = ('school',)
 
 
 
-from django.contrib import admin
-from .models import ProjectProgress, ProgressPhoto
+
+
+
 
 
 class ProgressPhotoInline(admin.TabularInline):

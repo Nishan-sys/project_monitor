@@ -36,6 +36,7 @@
             <th>Name</th>
             <th>Description</th>
             <th>Contractor</th>
+            <th>Projects Assigned By</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -46,6 +47,7 @@
               <td>{{ p.name }}</td>
               <td>{{ p.description }}</td>
               <td>{{ p.contractor }}</td>
+              <td>{{ p.assigned_by.username }}</td>
               <td class="text-center">
                 <a href="{% url 'project_progress' p.id %}" class="btn btn-sm btn-outline-primary rounded-pill">
                   Add Progress

@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from user_app.models import School, SchoolUser
 from .models import Projects, ProjectProgress, ProgressPhoto
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import ProjectForm  # we’ll define this below
 
 
 def assign_project(request, school_id):
@@ -18,6 +20,7 @@ def assign_project(request, school_id):
             contractor=request.POST.get('contractor', ''),
             start_date=request.POST['start_date'],
             end_date=request.POST['end_date'],
+            assigned_by=request.user, 
         )
         return redirect('projects_list')  # adjust to your route
 
@@ -95,6 +98,41 @@ def view_all_progress(request):
         'progresses': progresses
     }) 
 
+@login_required
+
+def edit_project(request, project_id):
+    project = get_object_or_404(Projects, id=project_id)
+
+    # Optional: check permissions (only provincial or zonal directors)
+    if project.assigned_by != request.user:
+        messages.error(request, "You are not authorized to edit this project.")
+        return redirect('all_projects')
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Project updated successfully.")
+            return redirect('all_projects')
+    else:
+        form = ProjectForm(instance=project)
+
+    return render(request, 'edit_project.html', {'form': form, 'project': project})
+
+
+def delete_project(request, project_id):
+    project = get_object_or_404(Projects, id=project_id)
+
+    if project.assigned_by != request.user:
+        messages.error(request, "You are not authorized to delete this project.")
+        return redirect('projects_list')
+
+    if request.method == 'POST':
+        project.delete()
+        messages.success(request, "Project deleted successfully.")
+        return redirect('projects_list')
+
+    return render(request, 'delete_confirm.html', {'project': project})
 
 
 
