@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Division, School
+from .models import Division, School, Profile
+from projects_app.models import ProjectProgress
 from projects_app.models import Projects
 
 def login_view(request):
@@ -90,7 +91,45 @@ def zonal_dashboard(request):
 
 @login_required
 def divisional_dashboard(request):
-    return render(request, 'divisional_dashboard.html')
+    # Get logged-in user's profile and division
+    profile = Profile.objects.filter(user=request.user).select_related('division').first()
+
+    if not profile or not profile.division:
+        return render(request, 'error.html', {'message': 'No division assigned to your profile.'})
+
+    division = profile.division
+
+    # ✅ Get all projects in this division
+    projects = Projects.objects.filter(
+        school__division=division
+    ).select_related('school')
+
+    # ✅ Get all progress updates for projects in this division
+    progresses = ProjectProgress.objects.filter(
+        project__school__division=division
+    ).select_related('project', 'project__school')
+
+    # ✅ Handle comment submission
+    '''
+    if request.method == 'POST':
+        progress_id = request.POST.get('progress_id')
+        comment_text = request.POST.get('comment', '').strip()
+        progress = get_object_or_404(ProjectProgress, id=progress_id)
+
+        if comment_text:
+            ProgressComment.objects.create(
+                progress=progress,
+                director=request.user,
+                comment=comment_text
+            )
+
+        return redirect('divisional_dashboard')
+    '''
+    return render(request, 'divisional_dashboard.html', {
+        'projects': projects,
+        'progresses': progresses,
+        'division': division
+    })
 
 @login_required
 def principal_dashboard(request):

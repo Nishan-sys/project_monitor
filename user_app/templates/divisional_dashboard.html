@@ -1,7 +1,83 @@
 {% extends 'master.html' %}
-
-{% block title %}My Page Title{% endblock %}
+{% block title %}{{ division.name }} Division Dashboard{% endblock %}
 
 {% block content %}
-<h1>Divisional Director</h1>
+<div class="container mt-4">
+  <h3 class="text-center text-primary mb-4">
+    {{ division.name }} Division – Dashboard
+  </h3>
+
+  <!-- Projects List -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-dark text-white">Projects in Your Division</div>
+    <div class="card-body">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>School</th>
+            <th>Project</th>
+            <th>Type</th>
+            <th>Estimated Cost</th>
+            <th>Contractor</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in projects %}
+          <tr>
+            <td>{{ p.school.name }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.get_project_type_display }}</td>
+            <td>{{ p.estimated_cost }}</td>
+            <td>{{ p.contractor }}</td>
+            <td>{{ p.start_date }} - {{ p.end_date }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" class="text-center">No projects in this division.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Progress Updates -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">Progress Updates</div>
+    <div class="card-body">
+      {% for prog in progresses %}
+      <div class="border rounded p-3 mb-3">
+        <h6 class="fw-bold">{{ prog.project.name }} – {{ prog.project.school.name }}</h6>
+        <p>{{ prog.description }}</p>
+
+        {% if prog.photo %}
+          <img src="{{ prog.photo.url }}" class="img-fluid rounded mb-2" style="max-width: 200px;">
+        {% endif %}
+
+        <small class="text-muted">Updated on {{ prog.date|date:"Y-m-d" }}</small>
+
+        <!-- Comment Form -->
+        <form method="POST" class="mt-2">
+          {% csrf_token %}
+          <input type="hidden" name="progress_id" value="{{ prog.id }}">
+          <div class="input-group">
+            <input type="text" name="comment" placeholder="Add comment..." class="form-control" required>
+            <button class="btn btn-outline-primary btn-sm" type="submit">Post</button>
+          </div>
+        </form>
+
+        <!-- Existing Comments -->
+        {% for comment in prog.progresscomment_set.all %}
+          <div class="mt-2 ms-3 border-start ps-2">
+            <small><strong>{{ comment.director.username }}:</strong> {{ comment.comment }}</small>
+          </div>
+        {% empty %}
+          <p class="text-muted small ms-3">No comments yet.</p>
+        {% endfor %}
+      </div>
+      {% empty %}
+        <p class="text-center text-muted">No progress updates found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 {% endblock %}
