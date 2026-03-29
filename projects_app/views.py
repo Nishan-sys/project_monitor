@@ -4,6 +4,14 @@ from .models import Projects, ProjectProgress, ProgressPhoto
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ProjectForm  # we’ll define this below
+from django.http import HttpResponseRedirect
+from django.http import StreamingHttpResponse
+
+import requests
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from .models import ProjectProgress
+
 
 
 def assign_project(request, school_id):
@@ -134,6 +142,79 @@ def delete_project(request, project_id):
 
     return render(request, 'delete_confirm.html', {'project': project})
 
+# views.py
+
+
+
+
+
+#def download_report(request, pk):
+    # progress = get_object_or_404(ProjectProgress, pk=pk)
+    # if not progress.report_file:
+    #     return HttpResponse("No report available.", status=404)
+
+    # file_url = progress.report_file.url
+    # response = requests.get(file_url)
+    # filename = file_url.split("/")[-1]
+
+    # return HttpResponse(
+    #     response.content,
+    #     content_type='application/pdf',
+    #     headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+    # )
+    # progress = get_object_or_404(ProjectProgress, pk=pk)
+    # if not progress.report_file:
+    #     return HttpResponse("No report available.", status=404)
+
+    # # Cloudinary PDF URL (raw file)
+    # file_url = progress.report_file.url
+
+    # # Simply redirect user to the Cloudinary URL
+    # return HttpResponseRedirect(file_url)
+
+
+
+# def download_report(request, pk):
+#     progress = get_object_or_404(ProjectProgress, pk=pk)
+#     if not progress.report_file:
+#         return HttpResponse("No report available.", status=404)
+
+#     file_url = progress.report_file.url
+#     r = requests.get(file_url, stream=True)
+
+#     filename = file_url.split("/")[-1]
+#     response = StreamingHttpResponse(r.iter_content(chunk_size=8192), content_type='application/pdf')
+#     response['Content-Disposition'] = f'attachment; filename="{filename}"'
+#     return response
+
+
+def download_report(request, pk):
+    progress = get_object_or_404(ProjectProgress, pk=pk)
+
+    if not progress.report_file:
+        return HttpResponse("No report available.", status=404)
+
+    file_url = progress.report_file.url
+
+    try:
+        r = requests.get(file_url, stream=True)
+
+        # 🔥 CRITICAL CHECK
+        if r.status_code != 200:
+            return HttpResponse("Failed to fetch file from Cloudinary", status=500)
+
+        filename = file_url.split("/")[-1]
+
+        response = StreamingHttpResponse(
+            r.iter_content(chunk_size=8192),
+            content_type='application/pdf'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
+
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
 
 
    

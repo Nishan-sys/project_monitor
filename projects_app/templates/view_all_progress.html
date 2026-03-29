@@ -40,9 +40,10 @@
 
                 {% if p.report_file %}
                   <p><strong>Report:</strong>
-                    <a href="{{ p.report_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                      Download
+                    <a href="{% url 'download_report' p.id %}" class="btn btn-sm btn-outline-secondary">
+                      Download PDF
                     </a>
+
                   </p>
                 {% endif %}
 
