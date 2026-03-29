@@ -140,4 +140,4 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-print("DB URL:", os.getenv("DATABASE_URL"))
+
