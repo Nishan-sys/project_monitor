@@ -14,6 +14,10 @@ from .models import ProjectProgress
 
 
 
+from .utils.supabase_storage import upload_pdf_to_supabase
+
+
+
 def assign_project(request, school_id):
     school = get_object_or_404(School, id=school_id)
 
@@ -48,42 +52,42 @@ def school_projects(request):
 
 
 
-@login_required
-def add_project_progress(request, project_id):
-    project = get_object_or_404(Projects, id=project_id)
-    school_user = request.user.schooluser
+# @login_required
+# def add_project_progress(request, project_id):
+#     project = get_object_or_404(Projects, id=project_id)
+#     school_user = request.user.schooluser
 
-    if project.school != school_user.school:
-        return redirect('school_projects')
+#     if project.school != school_user.school:
+#         return redirect('school_projects')
 
-    if request.method == 'POST':
-        print("FILES:", request.FILES)
-        print("POST:", request.POST)
-        progress = request.POST.get('progress')
-        description = request.POST.get('description')
-        report_file = request.FILES.get('report_file')
-        photos = request.FILES.getlist('photos')  
+#     if request.method == 'POST':
+#         print("FILES:", request.FILES)
+#         print("POST:", request.POST)
+#         progress = request.POST.get('progress')
+#         description = request.POST.get('description')
+#         report_file = request.FILES.get('report_file')
+#         photos = request.FILES.getlist('photos')  
 
-        progress_entry = ProjectProgress.objects.create(
-            project=project,
-            school=school_user.school,
-            progress=progress,
-            description=description,
-            report_file=report_file
-        )
+#         progress_entry = ProjectProgress.objects.create(
+#             project=project,
+#             school=school_user.school,
+#             progress=progress,
+#             description=description,
+#             report_file=report_file
+#         )
 
-        # Save up to 4 photos
-        for photo in photos[:4]:
-            print("Saving photo:", photo.name)
-            ProgressPhoto.objects.create(progress=progress_entry, image=photo)
+#         # Save up to 4 photos
+#         for photo in photos[:4]:
+#             print("Saving photo:", photo.name)
+#             ProgressPhoto.objects.create(progress=progress_entry, image=photo)
 
-        # Update project's latest progress
-        project.progress = progress
-        project.save()
+#         # Update project's latest progress
+#         project.progress = progress
+#         project.save()
 
-        return redirect('school_projects')
+#         return redirect('school_projects')
 
-    return render(request, 'add_project_progress.html', {'project': project})
+#     return render(request, 'add_project_progress.html', {'project': project})
 
 
 @login_required
@@ -144,7 +148,67 @@ def delete_project(request, project_id):
 
 # views.py
 
+#**********************************************************
 
+@login_required
+def add_project_progress(request, project_id):
+    project = get_object_or_404(Projects, id=project_id)
+
+    if not hasattr(request.user, 'schooluser'):
+        return redirect('login')
+
+    school_user = request.user.schooluser
+
+    if project.school != school_user.school:
+        return redirect('school_projects')
+
+    if request.method == 'POST':
+        progress = request.POST.get('progress')
+        description = request.POST.get('description')
+        pdf_file = request.FILES.get('report_file')
+        photos = request.FILES.getlist('photos')
+
+        if not progress:
+            return HttpResponse("Progress is required")
+
+        pdf_url = None
+
+        if pdf_file:
+            if not pdf_file.name.endswith('.pdf'):
+                return HttpResponse("Only PDF allowed")
+
+            try:
+                import uuid
+                #file_name = f"{uuid.uuid4()}_{pdf_file.name}"
+                pdf_url = upload_pdf_to_supabase(pdf_file)
+            except Exception as e:
+                return HttpResponse(f"Error: {str(e)}")
+
+        from django.db import transaction
+
+        with transaction.atomic():
+            progress_entry = ProjectProgress.objects.create(
+                project=project,
+                school=school_user.school,
+                progress=progress,
+                description=description,
+                report_file=pdf_url
+            )
+
+            for photo in photos[:4]:
+                ProgressPhoto.objects.create(
+                    progress=progress_entry,
+                    image=photo
+                )
+
+            project.progress = progress_entry.progress
+            project.save()
+
+        return redirect('school_projects')
+
+    return render(request, 'add_project_progress.html', {'project': project})
+
+#**********************************************************
 
 
 
@@ -188,33 +252,37 @@ def delete_project(request, project_id):
 #     return response
 
 
+
+
+
 def download_report(request, pk):
     progress = get_object_or_404(ProjectProgress, pk=pk)
 
     if not progress.report_file:
         return HttpResponse("No report available.", status=404)
 
-    file_url = progress.report_file.url
+    base_url = progress.report_file.split("?")[0]
 
     try:
-        r = requests.get(file_url, stream=True)
+        response = requests.get(base_url, stream=True, timeout=10)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        return HttpResponse(f"Failed to fetch report: {str(e)}", status=502)
 
-        # 🔥 CRITICAL CHECK
-        if r.status_code != 200:
-            return HttpResponse("Failed to fetch file from Cloudinary", status=500)
+    filename = f"report_{pk}.pdf"
 
-        filename = file_url.split("/")[-1]
+    django_response = StreamingHttpResponse(
+        response.iter_content(chunk_size=8192),
+        content_type="application/pdf"
+    )
+    django_response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return django_response
 
-        response = StreamingHttpResponse(
-            r.iter_content(chunk_size=8192),
-            content_type='application/pdf'
-        )
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+from django.conf import settings
 
-        return response
+print("SUPABASE URL:", settings.SUPABASE_URL)
+print("SUPABASE KEY:", settings.SUPABASE_KEY)
 
-    except Exception as e:
-        return HttpResponse(f"Error: {str(e)}", status=500)
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
 
-
-   
