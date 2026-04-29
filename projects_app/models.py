@@ -5,6 +5,7 @@ from cloudinary_storage.storage import MediaCloudinaryStorage
 from cloudinary.models import CloudinaryField
 from django.core.exceptions import ValidationError
 from cloudinary.models import CloudinaryField
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 def validate_pdf(file):
     if not file.name.lower().endswith('.pdf'):
@@ -43,7 +44,9 @@ class ProjectProgress(models.Model):
     project = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name='updates')
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
-    progress = models.IntegerField()
+    progress = models.IntegerField(
+    validators=[MinValueValidator(0), MaxValueValidator(100)]
+)
     description = models.TextField(blank=True, null=True)
     report_file = models.URLField(blank=True, null=True)
 
