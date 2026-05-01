@@ -1,237 +1,542 @@
 {% extends 'master.html' %}
 
-{% block title %}My Page Title{% endblock %}
-
-{% block content %}
-
-<!-- Hero Section -->
-<div class="bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="container py-5">
-        <div class="row align-items-center min-vh-50">
-            <div class="col-lg-6 text-white">
-                <h1 class="display-3 fw-bold mb-4 text-primary">ව්‍යාපෘති ප්‍රගති අධීක්ෂණ පද්ධතිය</h1>
-                <p class="lead mb-4 text-primary">උතුරු මැද පළාත් සභාවේ සියලුම ව්‍යාපෘති සැලසුම්, ක්‍රියාත්මක කිරීම සහ අධීක්ෂණය සඳහා පූර්ණ විසඳුමක්</p>
-                <div class="d-flex gap-3">
-                    <!--
-                    <a href="#projects" class="btn btn-light btn-lg px-4">ව්‍යාපෘති බලන්න</a>
-                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">ඇතුළු වන්න</a>
-                    -->
-                </div>
-            </div>
-            <div class="col-lg-6 mt-5 mt-lg-0">
-                <div class="card border-0 shadow-lg">
-                    <div class="card-body p-5">
-                        <div class="row text-center g-4">
-                            <div class="col-6">
-                                <div class="bg-primary bg-opacity-10 rounded p-3">
-                                    <h2 class="text-primary fw-bold mb-0">156</h2>
-                                    <p class="text-muted mb-0">සක්‍රීය ව්‍යාපෘති</p>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="bg-success bg-opacity-10 rounded p-3">
-                                    <h2 class="text-success fw-bold mb-0">89</h2>
-                                    <p class="text-muted mb-0">සම්පූර්ණ කළ</p>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="bg-warning bg-opacity-10 rounded p-3">
-                                    <h2 class="text-warning fw-bold mb-0">23</h2>
-                                    <p class="text-muted mb-0">සැලසුම් අවධියේ</p>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="bg-info bg-opacity-10 rounded p-3">
-                                    <h2 class="text-info fw-bold mb-0">රු.45M</h2>
-                                    <p class="text-muted mb-0">මුළු අයවැය</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Key Features Section -->
- <!--
-<div class="container my-5 py-5">
-    <div class="text-center mb-5">
-        <h2 class="display-5 fw-bold mb-3">පද්ධතියේ ප්‍රධාන විශේෂාංග</h2>
-        <p class="lead text-muted">ව්‍යාපෘති කළමනාකරණය සඳහා ඔබට අවශ්‍ය සියල්ල</p>
-    </div>
-    
-    <div class="row g-4">
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
-                <div class="card-body text-center p-4">
-                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <span class="fs-1">📊</span>
-                    </div>
-                    <h5 class="card-title fw-bold mb-3">ප්‍රගති නිරීක්ෂණය</h5>
-                    <p class="card-text text-muted">සැබෑ කාලීන ව්‍යාපෘති ප්‍රගතිය නිරීක්ෂණය කර ප්‍රතිවේදන ලබා ගන්න</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
-                <div class="card-body text-center p-4">
-                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <span class="fs-1">💰</span>
-                    </div>
-                    <h5 class="card-title fw-bold mb-3">අයවැය කළමනාකරණය</h5>
-                    <p class="card-text text-muted">ව්‍යාපෘති වියදම් සහ අයවැය ප්‍රවාහය කළමනාකරණය කරන්න</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
-                <div class="card-body text-center p-4">
-                    <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <span class="fs-1">📅</span>
-                    </div>
-                    <h5 class="card-title fw-bold mb-3">කාල සටහන් සැලසුම්</h5>
-                    <p class="card-text text-muted">ව්‍යාපෘති කාල සටහන් සහ සන්ධිස්ථාන සැලසුම් කරන්න</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition">
-                <div class="card-body text-center p-4">
-                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <span class="fs-1">👥</span>
-                    </div>
-                    <h5 class="card-title fw-bold mb-3">කණ්ඩායම් සහයෝගීතාව</h5>
-                    <p class="card-text text-muted">කණ්ඩායම් සාමාජිකයන් සමඟ පහසුවෙන් සම්බන්ධ වන්න</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
--->
-<!-- Recent Projects Section -->
- <!--
-<div class="bg-light py-5" id="projects">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3">මෑත ව්‍යාපෘති</h2>
-            <p class="lead text-muted">අවසන්ම එකතු කළ සහ යාවත්කාලීන කළ ව්‍යාපෘති</p>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-lg-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge bg-success">සක්‍රීය</span>
-                            <small class="text-muted">2025-01-15</small>
-                        </div>
-                        <h5 class="card-title fw-bold mb-3">ග්‍රාමීය මාර්ග සංවර්ධනය</h5>
-                        <p class="card-text text-muted mb-3">අනුරාධපුර දිස්ත්‍රික්කයේ ග්‍රාමීය මාර්ග ජාලය සංවර්ධනය කිරීම සඳහා වන ව්‍යාපෘතිය</p>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-1">
-                                <small class="text-muted">ප්‍රගතිය</small>
-                                <small class="fw-bold text-success">65%</small>
-                            </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%"></div>
-                            </div>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary w-100">විස්තර බලන්න</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge bg-warning text-dark">සැලසුම් අවධිය</span>
-                            <small class="text-muted">2025-01-20</small>
-                        </div>
-                        <h5 class="card-title fw-bold mb-3">පාසල් ගොඩනැගිලි ප්‍රතිසංස්කරණය</h5>
-                        <p class="card-text text-muted mb-3">පොළොන්නරුව දිස්ත්‍රික්කයේ පාසල් ගොඩනැගිලි ප්‍රතිසංස්කරණය සහ නවීකරණය</p>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-1">
-                                <small class="text-muted">ප්‍රගතිය</small>
-                                <small class="fw-bold text-warning">25%</small>
-                            </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: 25%"></div>
-                            </div>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary w-100">විස්තර බලන්න</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge bg-primary">ක්‍රියාත්මක</span>
-                            <small class="text-muted">2025-02-01</small>
-                        </div>
-                        <h5 class="card-title fw-bold mb-3">ජල සම්පාදන යෝජනා ක්‍රමය</h5>
-                        <p class="card-text text-muted mb-3">ගම්බිම් ප්‍රදේශවල පිරිසිදු පානීය ජලය සඳහා ජල සම්පාදන යෝජනා ක්‍රමය</p>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-1">
-                                <small class="text-muted">ප්‍රගතිය</small>
-                                <small class="fw-bold text-primary">45%</small>
-                            </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 45%"></div>
-                            </div>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary w-100">විස්තර බලන්න</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-5">
-            <a href="#" class="btn btn-primary btn-lg px-5">සියලුම ව්‍යාපෘති බලන්න</a>
-        </div>
-    </div>
-</div>
--->
-<!-- Call to Action -->
- <!--
-<div class="container my-5 py-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto text-center">
-            <h2 class="display-5 fw-bold mb-4">ඔබේ ව්‍යාපෘති කළමනාකරණය අද ආරම්භ කරන්න</h2>
-            <p class="lead text-muted mb-4">පද්ධතියට ඇතුළු වී ඔබේ ව්‍යාපෘති එක් කරන්න, අධීක්ෂණය කරන්න සහ කළමනාකරණය කරන්න</p>
-            <div class="d-flex gap-3 justify-content-center">
-                <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-5">ආරම්භ කරන්න</a>
-                <a href="#" class="btn btn-outline-secondary btn-lg px-5">වැඩි විස්තර</a>
-            </div>
-        </div>
-    </div>
-</div>
--->
-
-{% endblock %}
+{% block title %}Home — Projects Progress Monitoring System{% endblock %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-.hover-shadow {
-    transition: all 0.3s ease;
-}
-.hover-shadow:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
-}
-.transition {
-    transition: all 0.3s ease;
-}
-.min-vh-50 {
-    min-height: 50vh;
-}
+  :root {
+    --navy:   #1a3c5e;
+    --blue:   #2563a8;
+    --cyan:   #06b6d4;
+    --gold:   #b8962e;
+    --gold-light: #f0d97a;
+    --cream:  #faf8f3;
+    --slate:  #334155;
+    --muted:  #64748b;
+    --border: #e2e8f0;
+  }
+
+  body { background: var(--cream); font-family: 'Source Sans 3', sans-serif; }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,0.018) 60px,
+        rgba(255,255,255,0.018) 61px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,0.018) 60px,
+        rgba(255,255,255,0.018) 61px
+      );
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 60px;
+    background: var(--cream);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  /* Gold top accent bar */
+  .hero-accent-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+    width: 100%;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 64px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 48px 120px;
+  }
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; padding: 60px 24px 100px; gap: 40px; }
+  }
+
+  /* Emblem / crest area */
+  .hero-emblem {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .emblem-seal {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(184,150,46,0.25), 0 0 0 6px rgba(184,150,46,0.1);
+  }
+  .emblem-text { color: rgba(255,255,255,0.6); font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.4; }
+  .emblem-text strong { display: block; color: var(--gold-light); font-weight: 600; font-size: 0.85rem; }
+
+  /* Hero title */
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    font-weight: 600;
+    margin-bottom: 14px;
+    opacity: 0.9;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .hero-title .accent { color: var(--gold-light); }
+  .hero-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 36px;
+    line-height: 1.7;
+    max-width: 480px;
+    font-weight: 300;
+  }
+
+  /* Hero CTA */
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-hero-primary {
+    background: linear-gradient(135deg, var(--gold), #c9a84c);
+    color: var(--navy);
+    border: none;
+    border-radius: 6px;
+    padding: 13px 28px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-hero-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(184,150,46,0.35);
+    color: var(--navy);
+  }
+  .btn-hero-secondary {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 13px 28px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-hero-secondary:hover { background: rgba(255,255,255,0.14); color: white; }
+
+  /* Hero stats card */
+  .hero-stats-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+  }
+  .hero-stats-card .card-label {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .stat-item {
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.15s;
+  }
+  .stat-item:first-child { border-radius: 10px 0 0 0; }
+  .stat-item:nth-child(2) { border-radius: 0 10px 0 0; }
+  .stat-item:nth-child(3) { border-radius: 0 0 0 10px; }
+  .stat-item:last-child { border-radius: 0 0 10px 0; }
+  .stat-item:hover { background: rgba(255,255,255,0.08); }
+  .stat-item .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-item .stat-val span { color: var(--gold-light); font-size: 1.1rem; }
+  .stat-item .stat-lbl { font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+
+  /* ── Divider ornament ── */
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 60px auto;
+    max-width: 300px;
+    justify-content: center;
+  }
+  .ornament-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .ornament-diamond {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── About section ── */
+  .about-section { padding: 20px 0 60px; }
+  .section-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .section-body {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.8;
+    font-weight: 400;
+  }
+
+  /* Formal feature list */
+  .feature-list { list-style: none; padding: 0; margin: 28px 0 0; }
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+    color: var(--slate);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list .feat-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .feature-list .feat-title { font-weight: 600; color: var(--navy); display: block; margin-bottom: 2px; }
+  .feature-list .feat-desc  { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── Role cards ── */
+  .roles-section { padding: 20px 0 80px; }
+  .role-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .role-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--navy), var(--blue));
+  }
+  .role-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(26,60,94,0.12); }
+  .role-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+  .role-card h5 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .role-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin: 0; }
+
+  /* ── Formal footer band ── */
+  .info-band {
+    background: var(--navy);
+    padding: 40px 0;
+    position: relative;
+  }
+  .info-band::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+  .info-band p { color: rgba(255,255,255,0.55); font-size: 0.85rem; margin: 0; }
+  .info-band strong { color: rgba(255,255,255,0.9); }
+
+  /* Fade-in animation */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.22s; }
+  .delay-3 { animation-delay: 0.34s; }
+  .delay-4 { animation-delay: 0.46s; }
 </style>
 {% endblock %}
 
+{% block content %}
+
+<!-- Gold accent bar -->
+<div class="hero-accent-bar"></div>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-inner">
+
+    <!-- Left: Text -->
+    <div>
+      <div class="hero-emblem fade-up">
+        <div class="emblem-seal">&#127979;</div>
+        <div class="emblem-text">
+          <strong>North Central Province</strong>
+          Department of Education
+        </div>
+      </div>
+
+      <p class="hero-eyebrow fade-up delay-1">Official Monitoring System</p>
+      <h1 class="hero-title fade-up delay-2">
+        Projects Progress<br>
+        <span class="accent">Monitoring System</span>
+      </h1>
+      <p class="hero-subtitle fade-up delay-3">
+        A centralised platform for planning, tracking, and reporting
+        construction and infrastructure projects across all schools
+        of the North Central Province.
+      </p>
+
+      <div class="hero-cta fade-up delay-4">
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard_redirect' %}" class="btn-hero-primary">
+            &#9654; Go to Dashboard
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn-hero-primary">
+            &#128274; Sign In
+          </a>
+          <a href="{% url 'projects_list' %}" class="btn-hero-secondary">
+            &#128196; View Projects
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right: Stats -->
+    <div class="hero-stats-card fade-up delay-2">
+      <div class="card-label">System Overview</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-val">{{ total_projects|default:"—" }}</div>
+          <div class="stat-lbl">Total Projects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">{{ completed_projects|default:"—" }}</div>
+          <div class="stat-lbl">Completed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">{{ ongoing_projects|default:"—" }}</div>
+          <div class="stat-lbl">Ongoing</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">{{ total_schools|default:"—" }}</div>
+          <div class="stat-lbl">Schools</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Body ── -->
+<div class="container" style="max-width: 1100px;">
+
+  <div class="ornament-divider">
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line"></div>
+  </div>
+
+  <!-- About + Features -->
+  <section class="about-section">
+    <div class="row g-5 align-items-start">
+
+      <!-- Left: About -->
+      <div class="col-lg-5">
+        <p class="section-eyebrow">About the System</p>
+        <h2 class="section-title">Transparent Infrastructure Monitoring</h2>
+        <p class="section-body">
+          The Projects Progress Monitoring System provides a structured, role-based
+          platform for the North Central Province Education Department to oversee
+          school construction and repair projects from assignment through completion.
+        </p>
+        <p class="section-body mt-3">
+          Each level of administration — from the Provincial Director to school-level
+          staff — has a dedicated interface calibrated to their responsibilities,
+          ensuring accountability and transparency at every tier.
+        </p>
+      </div>
+
+      <!-- Right: Feature list -->
+      <div class="col-lg-7">
+        <ul class="feature-list">
+          <li>
+            <div class="feat-icon">&#128204;</div>
+            <div>
+              <span class="feat-title">Province-wide Project Assignment</span>
+              <span class="feat-desc">The Provincial Director can assign construction and repair projects to any school across all zones and divisions.</span>
+            </div>
+          </li>
+          <li>
+            <div class="feat-icon">&#127979;</div>
+            <div>
+              <span class="feat-title">Zone-scoped Administration</span>
+              <span class="feat-desc">Zonal Directors manage and monitor projects exclusively within their geographic zone, ensuring focused oversight.</span>
+            </div>
+          </li>
+          <li>
+            <div class="feat-icon">&#128200;</div>
+            <div>
+              <span class="feat-title">Progress Reporting with Evidence</span>
+              <span class="feat-desc">School-level users submit progress updates with percentage completion, descriptions, photographs, and PDF reports.</span>
+            </div>
+          </li>
+          <li>
+            <div class="feat-icon">&#128196;</div>
+            <div>
+              <span class="feat-title">Secure Document Storage</span>
+              <span class="feat-desc">Project reports are stored securely via Supabase and photos via Cloudinary, accessible only to authorised personnel.</span>
+            </div>
+          </li>
+          <li>
+            <div class="feat-icon">&#128274;</div>
+            <div>
+              <span class="feat-title">Role-based Access Control</span>
+              <span class="feat-desc">Four distinct user roles — Provincial, Zonal, Divisional, and School — each with precisely scoped permissions.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="ornament-divider">
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line"></div>
+  </div>
+
+  <!-- Role cards -->
+  <section class="roles-section">
+    <div class="text-center mb-5">
+      <p class="section-eyebrow">System Users</p>
+      <h2 class="section-title">Administrative Hierarchy</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3">
+        <div class="role-card">
+          <div class="role-icon">&#127981;</div>
+          <h5>Provincial Director</h5>
+          <p>Province-wide oversight. Assigns projects to any school. Views all statistics and progress reports across all zones.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="role-card">
+          <div class="role-icon">&#127968;</div>
+          <h5>Zonal Director</h5>
+          <p>Manages all schools within their zone. Assigns projects to zone schools and monitors progress updates.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="role-card">
+          <div class="role-icon">&#128203;</div>
+          <h5>Divisional Director</h5>
+          <p>Views and monitors all projects within their division. Reviews progress updates and provides feedback comments.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="role-card">
+          <div class="role-icon">&#127979;</div>
+          <h5>School User</h5>
+          <p>Submits progress updates for assigned projects including completion percentage, photos, and PDF reports.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ── Info band ── -->
+<div class="info-band">
+  <div class="container text-center" style="max-width:1100px;">
+    <p>
+      <strong>Projects Progress Monitoring System</strong> &mdash;
+      North Central Province Department of Education &mdash;
+      Developed by <strong>ZEO, Anuradhapura</strong>
+    </p>
+  </div>
+</div>
+
+{% endblock %}

@@ -14,6 +14,7 @@ local_settings.py
 # Ignore static files collected by collectstatic
 /staticfiles/
 /media/
+project_photos/
 
 # Ignore logs and temporary files
 *.log
@@ -62,3 +63,4 @@ __pycache__/
 
 # Keep Django database in Git (contains important data)
 !db.sqlite3
+

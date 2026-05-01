@@ -1,69 +1,195 @@
-<!-- templates/projects_app/school_projects.html -->
 {% extends 'master.html' %}
-{% block content %}
-<!--
-<h4>My Projects</h4>
-<table class="table">
-  <thead>
-    <tr><th>Name</th><th>Description</th><th>Contractor</th><th>Action</th></tr>
-  </thead>
-  <tbody>
-    {% for p in projects %}
-      <tr>
-        <td>{{ p.name }}</td>
-        <td>{{ p.description }}</td>
-        <td>{{ p.contractor }}</td>
-         <td>
-        <a href="{% url 'project_progress' p.id %}" class="btn btn-sm btn-outline-primary">
-          Add Progress
-        </a>
-      </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="3">No projects assigned</td></tr>
-    {% endfor %}
-  </tbody>
-</table>-->
-<div class="container mt-5">
-  <div class="card shadow-lg p-4 rounded-4">
-    <h4 class="mb-4 text-center text-primary">PROJECTS FOR {{ school.name }}</h4>
+{% load static %}
 
-    <div class="table-responsive">
-      <table class="table table-striped align-middle">
-        <thead class="table-dark text-center">
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Contractor</th>
-            <th>Projects Assigned By</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in projects %}
-            <tr>
-              <td class="text-center">{{ forloop.counter }}</td>
-              <td>{{ p.name }}</td>
-              <td>{{ p.description }}</td>
-              <td>{{ p.contractor }}</td>
-              <td>{{ p.assigned_by.username }}</td>
-              <td class="text-center">
-                <a href="{% url 'project_progress' p.id %}" class="btn btn-sm btn-outline-primary rounded-pill">
-                  Add Progress
-                </a>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="5" class="text-center text-muted py-3">
-                No projects assigned yet.
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+{% block title %}Projects — {{ school.name }}{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #1a3c5e 0%, #2563a8 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 20px rgba(37,99,168,0.18);
+  }
+  .page-header h3 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+  .page-header p  { margin: 6px 0 0; opacity: 0.8; font-size: 0.92rem; }
+
+  .projects-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .projects-card .card-header {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    padding: 16px 24px;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .projects-card .card-header h5 { margin: 0; font-weight: 700; font-size: 1rem; }
+
+  .table thead th {
+    background-color: #f1f5f9;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 12px 14px;
+    font-weight: 700;
+  }
+  .table tbody td {
+    padding: 13px 14px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .table tbody tr:last-child td { border-bottom: none; }
+  .table tbody tr:hover { background-color: #f8fafc; }
+
+  .desc-text {
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #64748b;
+    font-size: 0.85rem;
+  }
+
+  .badge-status {
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-ongoing   { background: #fef3c7; color: #92400e; }
+  .badge-completed { background: #d1fae5; color: #065f46; }
+  .badge-on_hold   { background: #ede9fe; color: #4c1d95; }
+
+  .btn-add-progress {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    transition: opacity 0.15s, transform 0.15s;
+    white-space: nowrap;
+  }
+  .btn-add-progress:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+    color: white;
+  }
+
+  .empty-state { text-align: center; padding: 48px 24px; color: #94a3b8; }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { margin: 0; font-size: 0.95rem; }
+
+  /* Progress indicator per project */
+  .latest-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+  }
+  .latest-progress .pct-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #2563a8;
+    min-width: 32px;
+  }
+  .mini-bar { flex: 1; height: 5px; background: #e2e8f0; border-radius: 10px; }
+  .mini-bar-fill { height: 5px; border-radius: 10px; background: linear-gradient(90deg, #2563a8, #06b6d4); }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h3>&#127979; {{ school.name }}</h3>
+    <p>School Projects Dashboard &mdash; {{ school.division.name }} Division</p>
+  </div>
+
+  <!-- Projects Table -->
+  <div class="card projects-card">
+    <div class="card-header">
+      <h5>Assigned Projects</h5>
+      <span class="badge bg-white text-primary fw-semibold">{{ projects|length }} project{{ projects|length|pluralize }}</span>
+    </div>
+    <div class="card-body p-0">
+      {% if projects %}
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Project Name</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Contractor</th>
+                <th>Status</th>
+                <th>Latest Progress</th>
+                <th>Assigned By</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in projects %}
+              <tr>
+                <td class="text-muted">{{ forloop.counter }}</td>
+                <td><strong>{{ p.name }}</strong></td>
+                <td><span class="desc-text" title="{{ p.description }}">{{ p.description }}</span></td>
+                <td>{{ p.get_project_type_display }}</td>
+                <td>{{ p.contractor|default:"—" }}</td>
+                <td>
+                  <span class="badge-status badge-{{ p.status }}">
+                    {{ p.get_status_display }}
+                  </span>
+                </td>
+                <td>
+                  {% with latest=p.updates.last %}
+                    {% if latest %}
+                      <div class="latest-progress">
+                        <span class="pct-label">{{ latest.progress }}%</span>
+                        <div class="mini-bar">
+                          <div class="mini-bar-fill" style="width:{{ latest.progress }}%;"></div>
+                        </div>
+                      </div>
+                    {% else %}
+                      <span class="text-muted small">No updates</span>
+                    {% endif %}
+                  {% endwith %}
+                </td>
+                <td class="text-muted small">
+                  {{ p.assigned_by.get_full_name|default:p.assigned_by.username|default:"—" }}
+                </td>
+                <td>
+                  <a href="{% url 'project_progress' p.id %}" class="btn btn-add-progress">
+                    + Add Progress
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">&#128196;</div>
+          <p>No projects assigned to {{ school.name }} yet.</p>
+        </div>
+      {% endif %}
     </div>
   </div>
+
 </div>
 {% endblock %}

@@ -8,11 +8,25 @@ from django.http import StreamingHttpResponse
 import requests
 from django.http import HttpResponse
 from .utils.supabase_storage import upload_pdf_to_supabase
+from user_app.utils import can_assign_projects, is_provincial, get_user_zone
+from user_app.utils import can_assign_projects, is_provincial, is_zonal, get_user_zone
 
 
 @login_required
 def assign_project(request, school_id):
+    # Step 1 — role check: only provincial and zonal directors allowed
+    if not can_assign_projects(request.user):
+        messages.error(request, "You are not authorized to assign projects.")
+        return redirect('dashboard_redirect')
+
     school = get_object_or_404(School, id=school_id)
+
+    # Step 2 — zone scope check: zonal directors can only assign within their zone
+    if is_zonal(request.user):
+        user_zone = get_user_zone(request.user)
+        if school.division.zone != user_zone:
+            messages.error(request, "You can only assign projects to schools in your zone.")
+            return redirect('dashboard_redirect')
 
     if request.method == "POST":
         Projects.objects.create(
@@ -25,14 +39,28 @@ def assign_project(request, school_id):
             contractor=request.POST.get('contractor', ''),
             start_date=request.POST['start_date'],
             end_date=request.POST['end_date'],
-            assigned_by=request.user, 
+            assigned_by=request.user,
         )
-        return redirect('projects_list')  # adjust to your route
+        messages.success(request, f"Project successfully assigned to {school.name}.")
+        return redirect('projects_list')
 
     return render(request, 'assign_project.html', {'school': school})
 
+@login_required
 def projects_list(request):
-    projects = Projects.objects.all().select_related('school')  # efficient query with school
+    user = request.user
+
+    if is_provincial(user):
+        projects = Projects.objects.all().select_related('school', 'school__division__zone')
+    elif is_zonal(user):
+        user_zone = get_user_zone(user)
+        projects = Projects.objects.filter(
+            school__division__zone=user_zone
+        ).select_related('school')
+    else:
+        # divisional directors, school users, others — redirect to their dashboard
+        return redirect('dashboard_redirect')
+
     return render(request, 'projects_list.html', {'projects': projects})
 
 

@@ -1,101 +1,231 @@
 {% extends 'master.html' %}
 {% load static %}
 
-{% block title %}Projects List{% endblock %}
+{% block title %}All Projects{% endblock %}
 
 {% block content %}
-<!--
-<div class="container mt-4">
-    <h3 class="text-primary mb-3">All Projects</h3>
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Project Name</th>
-                    <th>School</th>
-                    <th>Type</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Estimated Cost</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for project in projects %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ project.name }}</td>
-                    <td>{{ project.school.name }}</td>
-                    <td>{{ project.get_project_type_display }}</td>
-                    <td>{{ project.start_date }}</td>
-                    <td>{{ project.end_date }}</td>
-                    <td>{{ project.estimated_cost }}</td>
-                    <td><a href="#" class="btn btn-info" role="button">Edit</a><a href="#" class="btn btn-danger" role="button">Delete</a></td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center text-muted">No projects found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #1a3c5e 0%, #2563a8 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(37,99,168,0.18);
+  }
+  .page-header h3 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+  .page-header p  { margin: 6px 0 0; opacity: 0.8; font-size: 0.92rem; }
+
+  .btn-progress-report {
+    background: white;
+    color: #1a3c5e;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    padding: 8px 18px;
+    border: none;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .btn-progress-report:hover { background: #e0f2fe; color: #1a3c5e; }
+
+  .projects-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .projects-card .card-header {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    padding: 16px 24px;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .projects-card .card-header h5 { margin: 0; font-weight: 700; font-size: 1rem; }
+
+  .table thead th {
+    background-color: #f1f5f9;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 12px 14px;
+    font-weight: 700;
+  }
+  .table tbody td {
+    padding: 13px 14px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .table tbody tr:last-child td { border-bottom: none; }
+  .table tbody tr:hover { background-color: #f8fafc; }
+
+  .badge-status {
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-ongoing   { background: #fef3c7; color: #92400e; }
+  .badge-completed { background: #d1fae5; color: #065f46; }
+  .badge-on_hold   { background: #ede9fe; color: #4c1d95; }
+
+  .cost-badge {
+    background: #f0fdf4;
+    color: #166534;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Search bar */
+  .search-wrap {
+    position: relative;
+    max-width: 280px;
+  }
+  .search-wrap .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+  .search-wrap input {
+    border-radius: 9px;
+    border: 1.5px solid #e2e8f0;
+    padding: 8px 14px 8px 34px;
+    font-size: 0.85rem;
+    color: #334155;
+    width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .search-wrap input:focus {
+    border-color: #2563a8;
+    box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+    outline: none;
+  }
+
+  .empty-state { text-align: center; padding: 48px 24px; color: #94a3b8; }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { margin: 0; font-size: 0.95rem; }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h3>&#128196; All Projects</h3>
+      <p>Browse and manage all assigned projects</p>
     </div>
-    
-  <a class="nav-link" href="{% url 'view_all_progress' %}">Progress Reports</a>
+    <a href="{% url 'view_all_progress' %}" class="btn btn-progress-report">
+      &#128200; View Progress Reports
+    </a>
+  </div>
+
+  <!-- Projects Table -->
+  <div class="card projects-card">
+    <div class="card-header">
+      <h5>Projects</h5>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Search -->
+        <div class="search-wrap">
+          <i class="bi bi-search search-icon"></i>
+          <input type="text" id="projectSearch" placeholder="Search projects...">
+        </div>
+        <span class="badge bg-white text-primary fw-semibold" id="projectCount">
+          {{ projects|length }} total
+        </span>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      {% if projects %}
+        <div class="table-responsive">
+          <table class="table mb-0" id="projectsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Project Name</th>
+                <th>School</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Est. Cost</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="projectsBody">
+              {% for project in projects %}
+              <tr>
+                <td class="text-muted">{{ forloop.counter }}</td>
+                <td><strong>{{ project.name }}</strong></td>
+                <td>{{ project.school.name }}</td>
+                <td>{{ project.get_project_type_display }}</td>
+                <td>
+                  <span class="badge-status badge-{{ project.status }}">
+                    {{ project.get_status_display }}
+                  </span>
+                </td>
+                <td>{{ project.start_date }}</td>
+                <td>{{ project.end_date }}</td>
+                <td><span class="cost-badge">Rs. {{ project.estimated_cost }}</span></td>
+                <td>
+                  {% if project.assigned_by == user %}
+                    <a href="{% url 'edit_project' project.id %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                    <a href="{% url 'delete_project' project.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                  {% else %}
+                    <span class="text-muted small">
+                      By {{ project.assigned_by.get_full_name|default:project.assigned_by.username|default:"—" }}
+                    </span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">&#128196;</div>
+          <p>No projects found.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 
 </div>
 
--->
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="text-primary">All Projects</h3>
-        <a href="{% url 'view_all_progress' %}" class="btn btn-outline-success">
-            <i class="bi bi-graph-up"></i> View Progress Reports
-        </a>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Project Name</th>
-                    <th>School</th>
-                    <th>Type</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Estimated Cost</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for project in projects %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ project.name }}</td>
-                    <td>{{ project.school.name }}</td>
-                    <td>{{ project.get_project_type_display }}</td>
-                    <td>{{ project.start_date }}</td>
-                    <td>{{ project.end_date }}</td>
-                    <td>{{ project.estimated_cost }}</td>
-                    <td>
-    {% if project.assigned_by == user %}
-        <a href="{% url 'edit_project' project.id %}" class="btn btn-sm btn-outline-info">Edit</a>
-        <a href="{% url 'delete_project' project.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-    {% else %}
-        <span class="text-muted small">Assigned by {{ project.assigned_by.username }}</span>
-    {% endif %}
-</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="8" class="text-center text-muted">No projects found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+<script>
+  // Live search
+  const searchInput = document.getElementById('projectSearch');
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      const query = this.value.toLowerCase();
+      const rows  = document.querySelectorAll('#projectsBody tr');
+      let visible = 0;
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const show = text.includes(query);
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.getElementById('projectCount').textContent = visible + ' total';
+    });
+  }
+</script>
 
 {% endblock %}

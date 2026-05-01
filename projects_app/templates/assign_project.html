@@ -1,88 +1,262 @@
 {% extends 'master.html' %}
 {% load static %}
 
-{% block title %}Assign Project{% endblock %}
+{% block title %}Assign Project — {{ school.name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
-            <h4 class="mb-0">Assign a Project to {{ school.name }}</h4>
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #1a3c5e 0%, #2563a8 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 20px rgba(37,99,168,0.18);
+  }
+  .page-header h3 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+  .page-header p  { margin: 6px 0 0; opacity: 0.8; font-size: 0.92rem; }
+
+  .form-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .form-card .card-header {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    padding: 16px 24px;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .form-card .card-header h5 { margin: 0; font-weight: 700; font-size: 1rem; }
+  .form-card .card-header .header-icon {
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .form-card .card-body { padding: 28px; background: white; }
+
+  .form-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .form-control, .form-select {
+    border-radius: 9px;
+    border: 1.5px solid #e2e8f0;
+    font-size: 0.9rem;
+    color: #334155;
+    padding: 10px 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #2563a8;
+    box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+    outline: none;
+  }
+  .form-control[readonly] {
+    background: #f8fafc;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+  textarea.form-control { resize: vertical; min-height: 90px; }
+
+  /* School info banner */
+  .school-banner {
+    background: #eff6ff;
+    border: 1.5px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .school-banner .school-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .school-banner .school-info { flex: 1; }
+  .school-banner .school-info .school-name { font-weight: 700; color: #1a3c5e; font-size: 0.95rem; margin: 0; }
+  .school-banner .school-info .school-meta { font-size: 0.78rem; color: #64748b; margin: 2px 0 0; }
+
+  /* Cost input prefix */
+  .input-group-text {
+    border-radius: 9px 0 0 9px;
+    border: 1.5px solid #e2e8f0;
+    border-right: none;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 10px 14px;
+  }
+  .input-group .form-control {
+    border-radius: 0 9px 9px 0;
+    border-left: none;
+  }
+  .input-group .form-control:focus { border-color: #2563a8; box-shadow: 0 0 0 3px rgba(37,99,168,0.12); }
+
+  .divider { border: none; border-top: 1.5px solid #f1f5f9; margin: 20px 0; }
+
+  /* Buttons */
+  .btn-submit {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    border: none;
+    border-radius: 9px;
+    padding: 11px 32px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); color: white; }
+  .btn-cancel {
+    border-radius: 9px;
+    padding: 11px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1.5px solid #e2e8f0;
+    color: #64748b;
+    background: white;
+    transition: background 0.15s;
+  }
+  .btn-cancel:hover { background: #f1f5f9; color: #334155; }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h3>&#128196; Assign a New Project</h3>
+    <p>Fill in the details below to assign a project to this school.</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <form method="POST" action="">
+        {% csrf_token %}
+        <input type="hidden" name="school_id" value="{{ school.id }}">
+
+        <!-- School Banner -->
+        <div class="school-banner">
+          <div class="school-icon">&#127979;</div>
+          <div class="school-info">
+            <p class="school-name">{{ school.name }}</p>
+            <p class="school-meta">Census No: {{ school.census_number }} &mdash; {{ school.division.name }} Division</p>
+          </div>
         </div>
 
-        <div class="card-body p-4">
-            <form method="POST" action="">
-                {% csrf_token %}
+        <!-- Basic Info -->
+        <div class="card form-card">
+          <div class="card-header">
+            <div class="header-icon">&#128203;</div>
+            <h5>Project Information</h5>
+          </div>
+          <div class="card-body">
 
-                <!-- Hidden school id -->
-                <input type="hidden" name="school_id" value="{{ school.id }}">
+            <div class="mb-4">
+              <label class="form-label">Project Name</label>
+              <input type="text" name="name" class="form-control"
+                     placeholder="Enter project name" required>
+            </div>
 
-                <!-- Display school name -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">School</label>
-                    <input type="text" class="form-control" value="{{ school.name }}" readonly>
+            <div class="mb-4">
+              <label class="form-label">Description</label>
+              <textarea name="description" class="form-control"
+                        placeholder="Brief project description..."></textarea>
+            </div>
+
+            <div class="row g-3 mb-0">
+              <div class="col-md-6">
+                <label class="form-label">Project Type</label>
+                <select name="project_type" class="form-select" required>
+                  <option value="">— Select Type —</option>
+                  <option value="new_construction">New Construction</option>
+                  <option value="repair">Repair</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Estimated Cost (LKR)</label>
+                <div class="input-group">
+                  <span class="input-group-text">Rs.</span>
+                  <input type="number" step="0.01" name="estimated_cost"
+                         class="form-control" placeholder="0.00" required>
                 </div>
+              </div>
+            </div>
 
-                <!-- Project name -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Project Name</label>
-                    <input type="text" name="name" class="form-control" placeholder="Enter project name" required>
-                </div>
-
-                <!-- Description -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Description</label>
-                    <textarea name="description" class="form-control" rows="3" placeholder="Brief project description"></textarea>
-                </div>
-
-                <!-- Estimated cost -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Estimated Cost (LKR)</label>
-                    <input type="number" step="0.01" name="estimated_cost" class="form-control" placeholder="0.00" required>
-                </div>
-
-                <!-- Project type -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Project Type</label>
-                    <select name="project_type" class="form-select" required>
-                        <option value="">-- Select Type --</option>
-                        <option value="new_construction">New Construction</option>
-                        <option value="repair">Repair</option>
-                    </select>
-                </div>
-
-                <!-- Sponsor -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Sponsor (Optional)</label>
-                    <input type="text" name="sponsor" class="form-control" placeholder="Funding source or sponsor name">
-                </div>
-
-                <!-- Contractor -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Contractor (Optional)</label>
-                    <input type="text" name="contractor" class="form-control" placeholder="Main contractor name">
-                </div>
-
-                <!-- Dates -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Start Date</label>
-                        <input type="date" name="start_date" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">End Date</label>
-                        <input type="date" name="end_date" class="form-control" required>
-                    </div>
-                </div>
-
-                <!-- Submit button -->
-                <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success btn-lg px-5">
-                        <i class="bi bi-save"></i> Save Project
-                    </button>
-                </div>
-            </form>
+          </div>
         </div>
+
+        <!-- Contractor & Sponsor -->
+        <div class="card form-card">
+          <div class="card-header">
+            <div class="header-icon">&#128084;</div>
+            <h5>Contractor &amp; Sponsor</h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Sponsor <span class="text-muted fw-normal text-lowercase">(optional)</span></label>
+                <input type="text" name="sponsor" class="form-control"
+                       placeholder="Funding source or sponsor name">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Contractor <span class="text-muted fw-normal text-lowercase">(optional)</span></label>
+                <input type="text" name="contractor" class="form-control"
+                       placeholder="Main contractor name">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dates -->
+        <div class="card form-card">
+          <div class="card-header">
+            <div class="header-icon">&#128197;</div>
+            <h5>Project Duration</h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Start Date</label>
+                <input type="date" name="start_date" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">End Date</label>
+                <input type="date" name="end_date" class="form-control" required>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-3 mb-5">
+          <button type="submit" class="btn btn-submit">
+            &#10003; Save Project
+          </button>
+          <a href="{% url 'division_schools' %}" class="btn btn-cancel">
+            Cancel
+          </a>
+        </div>
+
+      </form>
     </div>
+  </div>
 </div>
 {% endblock %}

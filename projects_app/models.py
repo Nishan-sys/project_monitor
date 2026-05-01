@@ -19,12 +19,23 @@ class Projects(models.Model):
         ('new_construction', 'New Construction'),
         ('repair', 'Repair'),
     ]
+
+    STATUS_CHOICES = [                   
+        ('ongoing', 'Ongoing'),
+        ('completed', 'Completed'),
+        ('on_hold', 'On Hold'),
+    ]
     
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='projects')
     name = models.CharField(max_length=255)
     description = models.TextField()
     estimated_cost = models.DecimalField(max_digits=12, decimal_places=2, help_text="Estimated project cost")
     project_type = models.CharField(max_length=30, choices=PROJECT_TYPE_CHOICES)
+    status = models.CharField(               
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='ongoing'
+    )
     sponsor = models.CharField(max_length=200, blank=True, help_text="Funding source or sponsor name")
     contractor = models.CharField(max_length=200, blank=True, help_text="Main contractor name")
     start_date = models.DateField()

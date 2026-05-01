@@ -146,4 +146,7 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Content Security Policy for django-unicorn
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'")
+CSP_DEFAULT_SRC = ("'self'",)
 

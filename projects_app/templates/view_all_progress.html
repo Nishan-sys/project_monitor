@@ -1,74 +1,327 @@
 {% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Progress Overview{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <div class="card shadow-lg p-4 rounded-4">
-    <h4 class="mb-4 text-center text-primary">Project Progress Overview</h4>
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #1a3c5e 0%, #2563a8 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(37,99,168,0.18);
+  }
+  .page-header h3 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+  .page-header p  { margin: 6px 0 0; opacity: 0.8; font-size: 0.92rem; }
 
-    <div class="table-responsive">
-      <table class="table table-striped align-middle">
-        <thead class="table-dark text-center">
-          <tr>
-            <th>#</th>
-            <th>School</th>
-            <th>Project</th>
-            <th>Progress (%)</th>
-            <th>Date</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in progresses %}
-          <tr>
-            <td class="text-center">{{ forloop.counter }}</td>
-            <td>{{ p.school.name }}</td>
-            <td>{{ p.project.name }}</td>
-            <td class="text-center">{{ p.progress }}%</td>
-            <td class="text-center">{{ p.date }}</td>
-            <td class="text-center">
-              <button class="btn btn-sm btn-outline-info" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#details{{ p.id }}">
-                View
-              </button>
-            </td>
-          </tr>
-          <tr class="collapse" id="details{{ p.id }}">
-            <td colspan="6">
-              <div class="p-3 border rounded bg-light">
-                <strong>Description:</strong>
-                <p>{{ p.description|default:"(No description)" }}</p>
+  .progress-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .progress-card .card-header {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    padding: 16px 24px;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .progress-card .card-header h5 { margin: 0; font-weight: 700; font-size: 1rem; }
 
-                {% if p.report_file %}
-                  <p><strong>Report:</strong>
-                    <a href="{% url 'download_report' p.id %}" class="btn btn-sm btn-outline-secondary">
-                      Download PDF
-                    </a>
+  .table thead th {
+    background-color: #f1f5f9;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 12px 14px;
+    font-weight: 700;
+  }
+  .table tbody td {
+    padding: 13px 14px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .table tbody tr:hover { background-color: #f8fafc; }
 
-                  </p>
-                {% endif %}
+  /* Progress bar in table */
+  .progress-cell { min-width: 140px; }
+  .progress-cell .pct-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #2563a8;
+    margin-bottom: 4px;
+  }
+  .mini-bar { height: 6px; background: #e2e8f0; border-radius: 20px; }
+  .mini-bar-fill { height: 6px; border-radius: 20px; background: linear-gradient(90deg, #2563a8, #06b6d4); }
 
-                {% if p.photos.all %}
-                  <div class="d-flex flex-wrap gap-2">
-                    {% for photo in p.photos.all %}
-                      <img src="{{ photo.image.url }}" class="img-thumbnail" style="width: 120px; height: 120px; object-fit: cover;">
-                    {% endfor %}
+  /* View button */
+  .btn-view {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    transition: opacity 0.15s;
+  }
+  .btn-view:hover { opacity: 0.85; color: white; }
+  .btn-view.collapsed { background: #f1f5f9; color: #334155; }
+  .btn-view.collapsed:hover { background: #e2e8f0; }
+
+  /* Expanded detail row */
+  .detail-panel {
+    background: #f8fafc;
+    border-top: 2px solid #e0f2fe;
+  }
+  .detail-panel td { padding: 20px 24px !important; }
+  .detail-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 768px) { .detail-inner { grid-template-columns: 1fr; } }
+
+  .detail-section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .detail-desc {
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.6;
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9px;
+    padding: 12px 14px;
+  }
+
+  .photo-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .photo-thumb {
+    width: 100px; height: 100px;
+    border-radius: 9px;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: transform 0.15s;
+    cursor: pointer;
+  }
+  .photo-thumb:hover { transform: scale(1.05); }
+
+  .btn-download {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1.5px solid #bbf7d0;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 7px 16px;
+    transition: background 0.15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-download:hover { background: #dcfce7; color: #166534; }
+
+  .empty-state { text-align: center; padding: 48px 24px; color: #94a3b8; }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { margin: 0; font-size: 0.95rem; }
+
+  /* Lightbox */
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox-overlay.active { display: flex; }
+  .lightbox-overlay img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+  }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h3>&#128200; Project Progress Overview</h3>
+      <p>All submitted progress reports across the province</p>
+    </div>
+    <span class="badge bg-white text-primary fw-semibold fs-6">{{ progresses|length }} report{{ progresses|length|pluralize }}</span>
+  </div>
+
+  <!-- Progress Table -->
+  <div class="card progress-card">
+    <div class="card-header">
+      <h5>Progress Reports</h5>
+      <span class="badge bg-white text-primary fw-semibold">{{ progresses|length }} total</span>
+    </div>
+    <div class="card-body p-0">
+      {% if progresses %}
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>School</th>
+                <th>Project</th>
+                <th>Progress</th>
+                <th>Date</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in progresses %}
+
+              <!-- Main Row -->
+              <tr>
+                <td class="text-muted">{{ forloop.counter }}</td>
+                <td><strong>{{ p.school.name }}</strong></td>
+                <td>{{ p.project.name }}</td>
+                <td>
+                  <div class="progress-cell">
+                    <div class="pct-label">{{ p.progress }}%</div>
+                    <div class="mini-bar">
+                      <div class="mini-bar-fill" style="width: {{ p.progress|default:0 }}%;"></div>
+                    </div>
                   </div>
-                {% else %}
-                  <p class="text-muted">No photos uploaded</p>
-                {% endif %}
-              </div>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6" class="text-center text-muted py-3">
-              No progress reports submitted yet.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+                </td>
+                <td class="text-muted small">{{ p.date|date:"Y-m-d" }}</td>
+                <td>
+                  <button class="btn btn-view collapsed" type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#details{{ p.id }}"
+                          aria-expanded="false">
+                    &#128269; View
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Expanded Detail Row -->
+              <tr class="detail-panel collapse" id="details{{ p.id }}">
+                <td colspan="6">
+                  <div class="detail-inner">
+
+                    <!-- Description & Report -->
+                    <div>
+                      <div class="detail-section-title">Description</div>
+                      <div class="detail-desc">
+                        {{ p.description|default:"No description provided." }}
+                      </div>
+
+                      {% if p.report_file %}
+                        <div class="mt-3">
+                          <div class="detail-section-title">Report</div>
+                          <a href="{% url 'download_report' p.id %}" class="btn-download">
+                            &#128196; Download PDF Report
+                          </a>
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <!-- Photos -->
+                    <div>
+                      <div class="detail-section-title">
+                        Photos
+                        {% if p.photos.all %}
+                          <span style="color:#2563a8;">({{ p.photos.count }})</span>
+                        {% endif %}
+                      </div>
+                      {% if p.photos.all %}
+                        <div class="photo-grid">
+                          {% for photo in p.photos.all %}
+                            <img src="{{ photo.image.url }}"
+                                 class="photo-thumb"
+                                 onclick="openLightbox('{{ photo.image.url }}')"
+                                 alt="Progress photo">
+                          {% endfor %}
+                        </div>
+                      {% else %}
+                        <p class="text-muted small mt-1">No photos uploaded.</p>
+                      {% endif %}
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">&#128200;</div>
+          <p>No progress reports submitted yet.</p>
+        </div>
+      {% endif %}
     </div>
   </div>
+
 </div>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightboxImg" src="" alt="Full size photo">
+</div>
+
+<script>
+  // Toggle View button text
+  document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const isCollapsed = this.classList.contains('collapsed');
+      this.innerHTML = isCollapsed ? '&#9650; Close' : '&#128269; View';
+    });
+  });
+
+  // Lightbox
+  function openLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
 {% endblock %}

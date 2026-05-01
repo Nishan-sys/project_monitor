@@ -1,65 +1,172 @@
-<!-- Unicorn component එක කිසිම දෙයක් extend කරන්නේ නැහැ -->
+<div>
+<style>
+  .schools-component .form-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .schools-component .form-select {
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    font-size: 0.9rem;
+    color: #334155;
+    padding: 10px 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .schools-component .form-select:focus {
+    border-color: #2563a8;
+    box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+  }
+
+  .schools-component .table thead th {
+    background-color: #f1f5f9;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 12px 14px;
+    font-weight: 700;
+  }
+  .schools-component .table tbody td {
+    padding: 12px 14px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .schools-component .table tbody tr:last-child td { border-bottom: none; }
+  .schools-component .table tbody tr:hover { background-color: #f8fafc; }
+
+  .schools-component .census-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .schools-component .btn-assign {
+    background: linear-gradient(135deg, #1a3c5e, #2563a8);
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .schools-component .btn-assign:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+    color: white;
+  }
+
+  .schools-component .results-info {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-top: 12px;
+    padding: 8px 14px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 3px solid #2563a8;
+  }
+
+  .schools-component .empty-state {
+    text-align: center;
+    padding: 36px 24px;
+    color: #94a3b8;
+  }
+  .schools-component .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .schools-component .empty-state p { margin: 0; font-size: 0.9rem; }
+
+  .schools-component .loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2563a8;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 10px 0;
+  }
+  .schools-component .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e0f2fe;
+    border-top-color: #2563a8;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 
 <div class="schools-component">
-    
-    <!-- Division Dropdown -->
-    <div class="mb-3">
-        <label class="form-label">Select a division:</label>
-        <select 
-            unicorn:model="selected_division_id"
-            class="form-select">
-            <option value="">-- select --</option>
-            {% for division in divisions %}
-                <option value="{{ division.id }}">{{ division.name }}</option>
+
+  <!-- Division Selector -->
+  <div class="mb-4">
+    <label class="form-label">Select a Division</label>
+    <select unicorn:model="selected_division_id" class="form-select">
+      <option value="">— Choose a division —</option>
+      {% for division in divisions %}
+        <option value="{{ division.id }}">{{ division.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Schools Table -->
+  {% if selected_division_id %}
+    {% if schools %}
+      <div class="mb-2">
+        <label class="form-label">Schools in Selected Division</label>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>School Name</th>
+              <th>Census Number</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="schoolsTable">
+            {% for school in schools %}
+            <tr>
+              <td class="text-muted">{{ forloop.counter }}</td>
+              <td><strong>{{ school.name }}</strong></td>
+              <td><span class="census-badge">{{ school.census_number }}</span></td>
+              <td>
+                <a href="{% url 'assign_project' school.id %}" class="btn btn-assign">
+                  + Assign Project
+                </a>
+              </td>
+            </tr>
             {% endfor %}
-        </select>
-    </div>
-    
-    <!-- Schools Dropdown -->
-    {% if selected_division_id %}
-        <div class="mb-3">
-            <label class="form-label">You can assign a project by clicking Assign Project button under Action</label>
-            
-            {% if schools %}
-                <!-- table testing start-->
-        <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">School name</th>
-                            <th scope="col">Census number</th>
-                             <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="schoolsTable">
-                        {% for school in schools %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ school.name }}</td>
-                            <td>{{ school.census_number }}</td>
-                            <td>
-                                {% comment %}
-                                <a href="{% #url 'assign_project' school.id %}" class="btn btn-sm btn-outline-primary">Assign Project</a>
-                                {% endcomment %}
-                                <a href="{% url 'assign_project' school.id %}" class="btn btn-sm btn-outline-primary">Assign a Project</a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="3" class="text-center text-muted">පාසල් නොමැත</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <!-- table testing end-->
-                <small class="text-muted">​Number of schools in this division is {{ schools|length }}</small>
-            {% else %}
-                <p class="text-muted">මේ කොට්ඨාසයේ පාසල් නැත</p>
-            {% endif %}
-        </div>
-        
+          </tbody>
+        </table>
+      </div>
+      <div class="results-info">
+        &#127979; {{ schools|length }} school{{ schools|length|pluralize }} found in this division
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">&#127979;</div>
+        <p>No schools found in this division.</p>
+      </div>
     {% endif %}
-    
- 
-    <div unicorn:loading class="text-primary">⏳ Loading...</div>
+  {% endif %}
+
+  <!-- Loading indicator -->
+  <div unicorn:loading class="loading-indicator mt-3">
+    <div class="spinner"></div>
+    Loading schools...
+  </div>
+
+</div>
 </div>

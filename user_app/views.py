@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Division, School, Profile
+from .utils import is_provincial, is_zonal, is_divisional,get_user_zone
 from projects_app.models import ProjectProgress
 from projects_app.models import Projects
 
@@ -14,7 +15,6 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
-            print(f"Attempting login forrrrr user: {username}")
             login(request, user)
             return redirect('dashboard_redirect')
         else:
@@ -34,12 +34,10 @@ def home(request):
 
 @login_required
 def dashboard_redirect(request):
-    user = request.user
-    print(f"User {user.username} with ID {user.id} is accessing dashboard_redirect")        
+    user = request.user      
     if hasattr(user, 'profile'):
         
         role = user.profile.role
-        print(role)
         if role == 'provincial':
             return redirect('provincial_dashboard')
         elif role == 'zonal':
@@ -74,24 +72,50 @@ def provincial_dashboard(request):
 
 @login_required
 def zonal_dashboard(request):
-    projects = Projects.objects.filter(assigned_by=request.user)
+    # Ensure only zonal directors can access this
+    if not is_zonal(request.user):
+        messages.error(request, "You are not authorized to view this page.")
+        return redirect('dashboard_redirect')
+
+    # Get this director's zone from their profile
+    profile = request.user.profile
+    if not profile.zone:
+        return render(request, 'error.html', {'message': 'No zone assigned to your profile.'})
+
+    zone = profile.zone
+
+    # All projects in this zone, regardless of who assigned them
+    projects = Projects.objects.filter(
+        school__division__zone=zone
+    ).select_related('school', 'school__division', 'assigned_by')
+
     total_projects = projects.count()
-    total_schools = School.objects.filter(projects__assigned_by=request.user).distinct().count()
-    completed_projects = projects.filter(end_date__lte='2025-10-31').count()  # adjust logic later
-    pending_progress = total_projects - completed_projects
+    total_schools = School.objects.filter(
+        division__zone=zone,
+        projects__isnull=False
+    ).distinct().count()
+    completed_projects = projects.filter(status='completed').count()
+    ongoing_projects = projects.filter(status='ongoing').count()
+    on_hold_projects = projects.filter(status='on_hold').count()
 
     context = {
+        'zone': zone,
         'projects': projects,
         'total_projects': total_projects,
         'total_schools': total_schools,
         'completed_projects': completed_projects,
-        'pending_progress': pending_progress,
+        'ongoing_projects': ongoing_projects,
+        'on_hold_projects': on_hold_projects,
     }
     return render(request, 'zonal_dashboard.html', context)
 
 @login_required
 def divisional_dashboard(request):
-    # Get logged-in user's profile and division
+    # Role check — only divisional directors allowed
+    if not is_divisional(request.user):
+        messages.error(request, "You are not authorized to view this page.")
+        return redirect('dashboard_redirect')
+
     profile = Profile.objects.filter(user=request.user).select_related('division').first()
 
     if not profile or not profile.division:
@@ -99,37 +123,34 @@ def divisional_dashboard(request):
 
     division = profile.division
 
-    # ✅ Get all projects in this division
+    # All projects in this division
     projects = Projects.objects.filter(
         school__division=division
-    ).select_related('school')
+    ).select_related('school', 'school__division', 'assigned_by')
 
-    # ✅ Get all progress updates for projects in this division
+    # All progress updates for projects in this division
     progresses = ProjectProgress.objects.filter(
         project__school__division=division
-    ).select_related('project', 'project__school')
+    ).select_related('project', 'project__school').order_by('-date')
 
-    # ✅ Handle comment submission
-    '''
-    if request.method == 'POST':
-        progress_id = request.POST.get('progress_id')
-        comment_text = request.POST.get('comment', '').strip()
-        progress = get_object_or_404(ProjectProgress, id=progress_id)
+    # Stats
+    total_projects = projects.count()
+    total_schools = projects.values('school').distinct().count()
+    completed_projects = projects.filter(status='completed').count()
+    ongoing_projects = projects.filter(status='ongoing').count()
+    on_hold_projects = projects.filter(status='on_hold').count()
 
-        if comment_text:
-            ProgressComment.objects.create(
-                progress=progress,
-                director=request.user,
-                comment=comment_text
-            )
-
-        return redirect('divisional_dashboard')
-    '''
-    return render(request, 'divisional_dashboard.html', {
+    context = {
+        'division': division,
         'projects': projects,
         'progresses': progresses,
-        'division': division
-    })
+        'total_projects': total_projects,
+        'total_schools': total_schools,
+        'completed_projects': completed_projects,
+        'ongoing_projects': ongoing_projects,
+        'on_hold_projects': on_hold_projects,
+    }
+    return render(request, 'divisional_dashboard.html', context)
 
 @login_required
 def principal_dashboard(request):
@@ -142,18 +163,30 @@ def index_redirect(request):
     else:
         return redirect('login')
 '''
+@login_required
 def division_schools(request, division_id=None):
-    divisions = Division.objects.all()
+    # Scope divisions based on role
+    if is_provincial(request.user):
+        divisions = Division.objects.all().select_related('zone')
+    elif is_zonal(request.user):
+        user_zone = get_user_zone(request.user)
+        if not user_zone:
+            messages.error(request, "No zone assigned to your profile.")
+            return redirect('dashboard_redirect')
+        divisions = Division.objects.filter(zone=user_zone).select_related('zone')
+    else:
+        messages.error(request, "You are not authorized to assign projects.")
+        return redirect('dashboard_redirect')
+
     if division_id:
-        selected_division = Division.objects.get(id=division_id)
+        selected_division = get_object_or_404(Division, id=division_id)
     else:
         selected_division = divisions.first()
-    schools = School.objects.filter(division=selected_division)
-    
+
     return render(request, 'division_schools.html', {
         'divisions': divisions,
-        'schools': schools,
         'selected_division': selected_division,
+        'division_id': selected_division.id if selected_division else None,
     })
 
 def get_schools_by_division(request, division_id):
